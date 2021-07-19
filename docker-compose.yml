@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/go/Dockerfile
+    tty: true
+    volumes:
+      - ./:/go/src
+    command: go run main.go
+    ports:
+      - '3030:3000'
