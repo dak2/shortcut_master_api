@@ -8,6 +8,6 @@ services:
     tty: true
     volumes:
       - ./:/go/src
-    command: go run main.go
+    command: go run ./cmd/main.go
     ports:
       - '3030:3000'
