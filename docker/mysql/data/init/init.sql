@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS quizzes (
   id          INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   name        VARCHAR(256) NOT NULL,
-  type        VARCHAR(256) NOT NULL,
+  type        ENUM("macOS", "windows"),
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
@@ -55,4 +55,12 @@ CREATE TABLE IF NOT EXISTS answers (
     ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-INSERT INTO users (name) VALUES ("テストユーザー1"),("テストユーザー2"),("テストユーザー3")
+INSERT INTO users (id, name, is_admin) VALUES (1, "テストユーザー1", false),(2, "テストユーザー2", false),(3, "テストユーザー3", false), (4, "テストユーザー4", false), (5, "テスト管理者", true);
+
+INSERT INTO quizzes (id, name, type) VALUES (1, "Slack", "macOS"), (2, "VSCode", "macOS"), (3, "Chrome", "macOS"), (4, "Github", "macOS");
+
+INSERT INTO rankings (quiz_id, user_id, ranking) VALUES (1, 1, 1), (2, 2, 1), (3, 3, 1), (4, 4, 1);
+
+INSERT INTO questions (id, quiz_id, contents) VALUES (1, 1, "DMを閲覧するには？");
+
+INSERT INTO answers (id, question_id, contents, is_correct) VALUES (1, 1, "⌘+shit+↓", false), (2, 1, "⌘+shit+K", true), (3, 1, "⌘+K", false), (4, 1, "⌘+T", false);
