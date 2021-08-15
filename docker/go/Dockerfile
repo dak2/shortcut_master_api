@@ -9,5 +9,3 @@ RUN apk update && \
     git
 RUN go mod tidy
 RUN go get -u github.com/cosmtrek/air
-ENV GO111MODULE=on
-CMD ["air"]
