@@ -21,8 +21,8 @@ services:
       dockerfile: docker/go/Dockerfile
     tty: true
     volumes:
-      - ./:/go/src
-    command: go run ./cmd/main.go
+      - ./:/app
+    command: air -c .air.toml
     depends_on:
       db:
         condition: service_started
