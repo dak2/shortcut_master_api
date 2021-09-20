@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"github.com/labstack/echo/v4"
 	"short_cut_master_api/src/infrastructure"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func hello(c echo.Context) error {
@@ -14,6 +16,11 @@ func hello(c echo.Context) error {
 func main() {
 	fmt.Println("server start")
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		// TODO : set valid origin
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
+	}))
 	infrastructure.HandleRouting(e)
 	e.Logger.Fatal(e.Start(":3000"))
 }
