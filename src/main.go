@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"github.com/labstack/echo/v4"
+	"short_cut_master_api/src/infrastructure"
 )
 
 func hello(c echo.Context) error {
@@ -10,7 +12,8 @@ func hello(c echo.Context) error {
 }
 
 func main() {
+	fmt.Println("server start")
 	e := echo.New()
-	e.GET("/", hello)
+	infrastructure.HandleRouting(e)
 	e.Logger.Fatal(e.Start(":3000"))
 }
