@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"short_cut_master_api/src/infrastructure"
-
+	router "short_cut_master_api/src/infrastructure/router"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -21,6 +20,6 @@ func main() {
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
-	infrastructure.HandleRouting(e)
+	router.Handle(e)
 	e.Logger.Fatal(e.Start(":3000"))
 }
