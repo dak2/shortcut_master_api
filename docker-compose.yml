@@ -12,7 +12,7 @@ services:
       - ./docker/mysql/data/init:/docker-entrypoint-initdb.d
       - ./docker/mysql/data/volume:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: go_dev_api
+      MYSQL_DATABASE: short_cut_master
       MYSQL_USER: ${USERNAME}
       MYSQL_PASSWORD: ${USERPASS}
       MYSQL_ROOT_PASSWORD: ${ROOTPASS}
