@@ -3,7 +3,7 @@ package infrastructure
 import (
 	"fmt"
 	"log"
-	config "short_cut_master_api/src/configs"
+	config "shortcut_master_api/src/configs"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

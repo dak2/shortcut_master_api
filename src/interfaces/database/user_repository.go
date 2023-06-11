@@ -1,7 +1,7 @@
 package database
 
 import (
-	entity "short_cut_master_api/src/entities"
+	entity "shortcut_master_api/src/entities"
 )
 
 type UserRepository struct {

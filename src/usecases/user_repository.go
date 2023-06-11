@@ -1,6 +1,6 @@
 package usecase
 
-import entity "short_cut_master_api/src/entities"
+import entity "shortcut_master_api/src/entities"
 
 // MEMO : for dip
 

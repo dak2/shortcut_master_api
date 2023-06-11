@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	entity "short_cut_master_api/src/entities"
-	repository "short_cut_master_api/src/interfaces/database"
-	usecase "short_cut_master_api/src/usecases"
+	entity "shortcut_master_api/src/entities"
+	repository "shortcut_master_api/src/interfaces/database"
+	usecase "shortcut_master_api/src/usecases"
 	"github.com/labstack/echo"
 )
 

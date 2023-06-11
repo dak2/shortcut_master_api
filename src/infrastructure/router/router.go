@@ -3,8 +3,8 @@ package router
 import (
 	"net/http"
 	"github.com/labstack/echo/v4"
-	infrastructure "short_cut_master_api/src/infrastructure"
-	controller "short_cut_master_api/src/interfaces/controllers"
+	infrastructure "shortcut_master_api/src/infrastructure"
+	controller "shortcut_master_api/src/interfaces/controllers"
 )
 
 func hello(c echo.Context) error {

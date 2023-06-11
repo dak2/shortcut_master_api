@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	router "short_cut_master_api/src/infrastructure/router"
+	router "shortcut_master_api/src/infrastructure/router"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
