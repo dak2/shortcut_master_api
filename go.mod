@@ -9,7 +9,7 @@ require (
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
+	golang.org/x/net v0.11.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.1

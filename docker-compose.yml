@@ -1,32 +1,32 @@
 version: "3.8"
 
 services:
-  db:
-    container_name: short_cut_master_db
-    build:
-      context: .
-      dockerfile: docker/mysql/Dockerfile
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./docker/mysql/data/init:/docker-entrypoint-initdb.d
-      - ./docker/mysql/data/volume:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: go_dev_api
-      MYSQL_USER: ${USERNAME}
-      MYSQL_PASSWORD: ${USERPASS}
-      MYSQL_ROOT_PASSWORD: ${ROOTPASS}
+  # db:
+  #   container_name: shortcut_master_db
+  #   build:
+  #     context: .
+  #     dockerfile: docker/mysql/Dockerfile
+  #   ports:
+  #     - "5000:5000"
+  #   volumes:
+  #     - ./docker/mysql/data/init:/docker-entrypoint-initdb.d
+  #     - ./docker/mysql/data/volume:/var/lib/mysql
+  #   environment:
+  #     MYSQL_DATABASE: go_dev_api
+  #     MYSQL_USER: ${USERNAME}
+  #     MYSQL_PASSWORD: ${USERPASS}
+  #     MYSQL_ROOT_PASSWORD: ${ROOTPASS}
   api:
-    container_name: short_cut_master_api
+    container_name: shortcut_master_api
     build:
       context: .
       dockerfile: docker/go/Dockerfile
     tty: true
     volumes:
       - ./:/app
-    command: air -c .air.toml
-    depends_on:
-      db:
-        condition: service_started
+    # command: air -c .air.toml
+    # depends_on:
+    #   db:
+    #     condition: service_started
     ports:
       - "3000:3000"
