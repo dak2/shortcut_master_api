@@ -8,10 +8,10 @@ import (
 )
 
 type ConfigList struct {
-	DbHost     string
-	DbName     string
-	DbUser     string
-	DbPassword string
+	DBHost     string
+	DBName     string
+	DBUser     string
+	DBPassword string
 }
 
 func Init() ConfigList {
@@ -22,10 +22,10 @@ func Init() ConfigList {
 	}
 
 	Config := ConfigList{
-		DbHost:     os.Getenv("DBHOST"),
-		DbName:     os.Getenv("DBNAME"),
-		DbUser:     os.Getenv("DBUSER"),
-		DbPassword: os.Getenv("ROOTPASS"),
+		DBHost:     os.Getenv("DB_HOST"),
+		DBName:     os.Getenv("DB_NAME"),
+		DBUser:     os.Getenv("DB_USERNAME"),
+		DBPassword: os.Getenv("DB_USERPASS"),
 	}
 	return Config
 }
