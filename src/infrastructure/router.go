@@ -1,9 +1,8 @@
-package router
+package infrastructure
 
 import (
 	"net/http"
 	"github.com/labstack/echo/v4"
-	infrastructure "shortcut_master_api/src/infrastructure"
 	controller "shortcut_master_api/src/interfaces/controllers"
 )
 
@@ -13,7 +12,7 @@ func hello(c echo.Context) error {
 
 func Handle(e *echo.Echo) {
 	e.GET("/", hello)
-	userController := controller.NewUsersController(infrastructure.NewSqlHandler())
+	userController := controller.NewUsersController(NewSqlHandler())
 
 	// -- users -- //
 	e.GET("/users", func(c echo.Context) error {
