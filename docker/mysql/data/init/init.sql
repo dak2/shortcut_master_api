@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS go_dev_api;
-USE go_dev_api;
+CREATE DATABASE IF NOT EXISTS shortcut_master_db;
+USE shortcut_master_db;
 
 CREATE TABLE IF NOT EXISTS users (
   id          INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
