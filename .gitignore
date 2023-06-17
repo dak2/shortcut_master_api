@@ -3,3 +3,5 @@
 
 # volume
 docker/mysql/data/volume
+
+/tmp
