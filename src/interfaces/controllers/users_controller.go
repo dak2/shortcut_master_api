@@ -3,17 +3,17 @@ package controllers
 import (
 	entity "shortcut_master_api/src/domain"
 	repository "shortcut_master_api/src/interfaces/database"
-	usecase "shortcut_master_api/src/usecases"
+	userUsecase "shortcut_master_api/src/usecases/user"
 	"github.com/labstack/echo"
 )
 
 type UserController struct {
-	Interactor usecase.UserInteractor
+	Interactor userUsecase.UserInteractor
 }
 
 func NewUsersController(sqlHandler repository.SqlHandler) *UserController {
 	return &UserController {
-		Interactor: usecase.UserInteractor {
+		Interactor: userUsecase.UserInteractor {
 			UserRepository: &repository.UserRepository {
 				SqlHandler: sqlHandler,
 			},

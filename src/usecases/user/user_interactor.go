@@ -1,4 +1,4 @@
-package usecase
+package user
 
 import (
 	entity "shortcut_master_api/src/domain"

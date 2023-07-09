@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	// entity "shortcut_master_api/src/domain"
-	// usecase "shortcut_master_api/src/usecases"
+	entity "shortcut_master_api/src/domain"
+	userUsecase "shortcut_master_api/src/usecases/user"
 
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
@@ -16,7 +16,7 @@ import (
 )
 
 type LoginInteractor struct {
-	// LoginRepository usecase.UserRepository
+	LoginRepository userUsecase.UserRepository
 }
 
 type GoogleUserInfo struct {
@@ -31,10 +31,10 @@ type GoogleUserResult struct {
 	Err      error
 }
 
-// func (interactor *LoginInteractor) GetUserByEmail(u entity.User) entity.User {
-// 	interactor.LoginRepository.SelectByEmail(u)
-// 	return u
-// }
+func (interactor *LoginInteractor) GetUserByEmail(u entity.User) entity.User {
+	interactor.LoginRepository.SelectByEmail(u)
+	return u
+}
 
 func InitGoogleOAuthConfig() (*oauth2.Config, error) {
 	err := godotenv.Load(".env")
