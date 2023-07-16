@@ -1,7 +1,6 @@
 package infrastructure
 
 import (
-	"fmt"
 	"net/http"
 	controller "shortcut_master_api/src/interfaces/controllers"
 
@@ -39,8 +38,7 @@ func Handle(e *echo.Echo) {
 		if res.Err != nil {
 			return res.Err
 		}
-		fmt.Printf(res.UserInfo.Email);
 
-		return c.JSON(http.StatusOK, "loginController")
+		return c.JSON(http.StatusOK, res.UserInfo.Email)
 	})
 }

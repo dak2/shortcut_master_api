@@ -31,10 +31,51 @@ type GoogleUserResult struct {
 	Err      error
 }
 
-func (interactor *LoginInteractor) GetUserByEmail(u entity.User) entity.User {
-	interactor.LoginRepository.SelectByEmail(u)
-	return u
+func (interactor *LoginInteractor) HandleLogin(code string) (entity.User, error) {
+	res := GetGoogleUser(code)
+	if res.Err != nil {
+		log.Fatal(res.Err)
+	}
+
+	u := entity.User{
+		GoogleUserId: res.UserInfo.Sub,
+		Name:         res.UserInfo.Name,
+		Email:        res.UserInfo.Email,
+		EmailVerified: res.UserInfo.EmailVerified,
+	}
+
+	// TODO: implement
+	// user, err := interactor.GetUserByEmail(u)
+	// if err != nil {
+	// 	if err.Error() == "User not found" {
+	// 		user, err := interactor.SaveUser(u)
+	// 		if err == nil || user == (entity.User{}) {
+	// 			return entity.User{}, fmt.Errorf("Failed to save user")
+	// 		}
+	// 		return user, nil
+	// 	} else {
+	// 		return entity.User{}, err
+	// 	}
+	// }
+
+	return u, nil
 }
+
+// func (interactor *LoginInteractor) GetUserByEmail(u entity.User) (entity.User, error) {
+// 	user, err := interactor.LoginRepository.SelectByEmail(u)
+// 	if err != nil {
+// 		return entity.User{}, err
+// 	}
+// 	return user, nil
+// }
+
+// func (interactor *LoginInteractor) SaveUser(u entity.User) (entity.User, error) {
+// 	user, err := interactor.LoginRepository.Store(u)
+// 	if err != nil {
+// 		return entity.User{}, err
+// 	}
+// 	return user, nil
+// }
 
 func InitGoogleOAuthConfig() (*oauth2.Config, error) {
 	err := godotenv.Load(".env")
@@ -58,7 +99,7 @@ func InitGoogleOAuthConfig() (*oauth2.Config, error) {
 	return c, nil
 }
 
-func (interactor *LoginInteractor) GetGoogleUser(code string) GoogleUserResult {
+func GetGoogleUser(code string) GoogleUserResult {
 	dec, err := base64.StdEncoding.DecodeString(code)
 	if err != nil {
 		return GoogleUserResult{Err: fmt.Errorf("Failed to decode token: %w", err)}
@@ -79,7 +120,7 @@ func (interactor *LoginInteractor) GetGoogleUser(code string) GoogleUserResult {
 	if err != nil {
 		return GoogleUserResult{Err: fmt.Errorf("Failed to get userinfo: %w", err)}
 	}
-	defer res.Body.Close();
+	defer res.Body.Close()
 
 	var userInfo GoogleUserInfo
 	err = json.NewDecoder(res.Body).Decode(&userInfo)
