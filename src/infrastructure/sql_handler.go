@@ -33,8 +33,8 @@ func NewSqlHandler() *SqlHandler {
 	return sqlHandler
 }
 
-func (handler *SqlHandler) Create(obj interface{}) {
-	handler.db.Create(obj)
+func (handler *SqlHandler) Create(obj interface{}) *gorm.DB {
+	return handler.db.Create(obj)
 }
 
 func (handler *SqlHandler) FindAll(obj interface{}) {

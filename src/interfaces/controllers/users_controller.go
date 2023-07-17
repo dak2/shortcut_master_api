@@ -24,7 +24,7 @@ func NewUsersController(sqlHandler repository.SqlHandler) *UserController {
 func (controller *UserController) Create(c echo.Context) {
 	u := entity.User{}
 	c.Bind(&u)
-	controller.Interactor.Add(u)
+	controller.Interactor.Create(u)
 	createdUsers := controller.Interactor.GetInfo()
 	c.JSON(201, createdUsers)
 	return

@@ -20,7 +20,7 @@ type LoginInteractor struct {
 }
 
 type GoogleUserInfo struct {
-	Sub           string `json:"sub"`
+	GoogleUserId  string `json:"sub"`
 	Name          string `json:"name"`
 	Email         string `json:"email"`
 	EmailVerified bool   `json:"email_verified"`
@@ -34,35 +34,29 @@ type GoogleUserResult struct {
 func (interactor *LoginInteractor) HandleLogin(code string) (entity.User, error) {
 	res := GetGoogleUser(code)
 	if res.Err != nil {
-		log.Fatal(res.Err)
+		return entity.User{}, res.Err
 	}
 
 	u := entity.User{
-		GoogleUserId: res.UserInfo.Sub,
+		GoogleUserId: res.UserInfo.GoogleUserId,
 		Name:         res.UserInfo.Name,
 		Email:        res.UserInfo.Email,
 	}
 
-	// TODO: implement
 	user, err := interactor.GetUserByEmail(u)
-	fmt.Println(user)
-	fmt.Println(2222222222)
 	if err != nil {
 		return entity.User{}, err
 	}
-	// if err != nil {
-	// 	if err.Error() == "User not found" {
-	// 		user, err := interactor.SaveUser(u)
-	// 		if err == nil || user == (entity.User{}) {
-	// 			return entity.User{}, fmt.Errorf("Failed to save user")
-	// 		}
-	// 		return user, nil
-	// 	} else {
+
+	// if user == (entity.User{}) {
+	// 	u, err := interactor.CreateUser(u)
+	// 	if err != nil {
 	// 		return entity.User{}, err
 	// 	}
+	// 	return u, nil
 	// }
 
-	return u, nil
+	return user, nil
 }
 
 func (interactor *LoginInteractor) GetUserByEmail(u entity.User) (entity.User, error) {
@@ -73,13 +67,13 @@ func (interactor *LoginInteractor) GetUserByEmail(u entity.User) (entity.User, e
 	return user, nil
 }
 
-// func (interactor *LoginInteractor) SaveUser(u entity.User) (entity.User, error) {
-// 	user, err := interactor.LoginRepository.Store(u)
-// 	if err != nil {
-// 		return entity.User{}, err
-// 	}
-// 	return user, nil
-// }
+func (interactor *LoginInteractor) CreateUser(u entity.User) (entity.User, error) {
+	user, err := interactor.LoginRepository.Create(u)
+	if err != nil {
+		return entity.User{}, err
+	}
+	return user, nil
+}
 
 func InitGoogleOAuthConfig() (*oauth2.Config, error) {
 	err := godotenv.Load(".env")

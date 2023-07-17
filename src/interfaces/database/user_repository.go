@@ -12,8 +12,13 @@ type UserRepository struct {
 	SqlHandler
 }
 
-func (db *UserRepository) Store(u entity.User) {
-	db.Create(&u)
+func (db *UserRepository) Create(u entity.User) (entity.User, error) {
+	res, err := db.Create(u)
+	if err != nil {
+		return entity.User{}, fmt.Errorf("Failed to create user")
+	} else {
+		return res, nil
+	}
 }
 
 func (db *UserRepository) Select() []entity.User {
