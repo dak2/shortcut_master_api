@@ -45,16 +45,15 @@ func (interactor *LoginInteractor) HandleLogin(code string) (entity.User, error)
 
 	user, err := interactor.GetUserByEmail(u)
 	if err != nil {
+		if err.Error() == "Record not found" {
+			u, err := interactor.CreateUser(u)
+			if err != nil {
+				return entity.User{}, err
+			}
+			return u, nil
+		}
 		return entity.User{}, err
 	}
-
-	// if user == (entity.User{}) {
-	// 	u, err := interactor.CreateUser(u)
-	// 	if err != nil {
-	// 		return entity.User{}, err
-	// 	}
-	// 	return u, nil
-	// }
 
 	return user, nil
 }
