@@ -5,5 +5,4 @@ type User struct {
 	GoogleUserId	string `json:"sub"`
 	Name 					string `json:"name"`
 	Email 				string `json:"email"`
-	EmailVerified bool   `json:"email_verified"`
 }

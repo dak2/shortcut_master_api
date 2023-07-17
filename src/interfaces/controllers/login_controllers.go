@@ -2,11 +2,23 @@ package controllers
 
 import (
 	loginUsecase "shortcut_master_api/src/usecases/login"
+	repository "shortcut_master_api/src/interfaces/database"
 )
 
 type LoginController struct {
 	Interactor loginUsecase.LoginInteractor
 }
+
+func NewLoginController(sqlHandler repository.SqlHandler) *LoginController {
+	return &LoginController {
+		Interactor: loginUsecase.LoginInteractor {
+			LoginRepository: &repository.UserRepository {
+				SqlHandler: sqlHandler,
+			},
+		},
+	}
+}
+
 
 func (c *LoginController) Handle(code string) loginUsecase.GoogleUserResult {
 	res := loginUsecase.GoogleUserResult{
@@ -14,7 +26,6 @@ func (c *LoginController) Handle(code string) loginUsecase.GoogleUserResult {
 			Sub:           "",
 			Name:          "",
 			Email:         "",
-			EmailVerified: false,
 		},
 		Err: nil,
 	}
@@ -30,7 +41,6 @@ func (c *LoginController) Handle(code string) loginUsecase.GoogleUserResult {
 		Sub:   user.GoogleUserId,
 		Name:  user.Name,
 		Email: user.Email,
-		EmailVerified: user.EmailVerified,
 	}
 
 	return res

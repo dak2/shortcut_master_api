@@ -7,6 +7,6 @@ import entity "shortcut_master_api/src/domain"
 type UserRepository interface {
 	Store(entity.User)
 	Select() []entity.User
-	SelectByEmail(entity.User) entity.User
+	SelectByEmail(entity.User) (entity.User, error)
 	Delete(id string)
 }

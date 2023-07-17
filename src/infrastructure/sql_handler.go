@@ -41,6 +41,13 @@ func (handler *SqlHandler) FindAll(obj interface{}) {
 	handler.db.Find(obj)
 }
 
+func (handler *SqlHandler) FindByParams(obj interface{}, column string, params interface{}) *gorm.DB {
+	// TODO: avoid SQL injection
+	columnCondition := fmt.Sprintf("%s = ?", column)
+	res := handler.db.First(obj, columnCondition, params)
+	return res
+}
+
 func (handler *SqlHandler) DeleteById(obj interface{}, id string) {
 	handler.db.Delete(obj, id)
 }

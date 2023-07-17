@@ -41,11 +41,15 @@ func (interactor *LoginInteractor) HandleLogin(code string) (entity.User, error)
 		GoogleUserId: res.UserInfo.Sub,
 		Name:         res.UserInfo.Name,
 		Email:        res.UserInfo.Email,
-		EmailVerified: res.UserInfo.EmailVerified,
 	}
 
 	// TODO: implement
-	// user, err := interactor.GetUserByEmail(u)
+	user, err := interactor.GetUserByEmail(u)
+	fmt.Println(user)
+	fmt.Println(2222222222)
+	if err != nil {
+		return entity.User{}, err
+	}
 	// if err != nil {
 	// 	if err.Error() == "User not found" {
 	// 		user, err := interactor.SaveUser(u)
@@ -61,13 +65,13 @@ func (interactor *LoginInteractor) HandleLogin(code string) (entity.User, error)
 	return u, nil
 }
 
-// func (interactor *LoginInteractor) GetUserByEmail(u entity.User) (entity.User, error) {
-// 	user, err := interactor.LoginRepository.SelectByEmail(u)
-// 	if err != nil {
-// 		return entity.User{}, err
-// 	}
-// 	return user, nil
-// }
+func (interactor *LoginInteractor) GetUserByEmail(u entity.User) (entity.User, error) {
+	user, err := interactor.LoginRepository.SelectByEmail(u)
+	if err != nil {
+		return entity.User{}, err
+	}
+	return user, nil
+}
 
 // func (interactor *LoginInteractor) SaveUser(u entity.User) (entity.User, error) {
 // 	user, err := interactor.LoginRepository.Store(u)

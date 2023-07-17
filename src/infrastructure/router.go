@@ -16,11 +16,11 @@ func hello(c echo.Context) error {
 }
 
 func Handle(e *echo.Echo) {
-	userController := controller.NewUsersController(NewSqlHandler())
 	e.GET("/", hello)
 
 	// -- users -- //
 	e.GET("/users", func(c echo.Context) error {
+		userController := controller.NewUsersController(NewSqlHandler())
 		users := userController.GetUser()
 		c.Bind(&users)
 		return c.JSON(http.StatusOK, users)
@@ -33,7 +33,7 @@ func Handle(e *echo.Echo) {
 			return err
 		}
 
-		loginController := controller.LoginController{}
+		loginController := controller.NewLoginController(NewSqlHandler())
 		res := loginController.Handle(req.Code)
 		if res.Err != nil {
 			return res.Err

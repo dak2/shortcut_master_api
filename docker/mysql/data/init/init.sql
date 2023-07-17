@@ -4,6 +4,8 @@ USE shortcut_master_db;
 CREATE TABLE IF NOT EXISTS users (
   id          INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   name        VARCHAR(256) NOT NULL,
+  google_user_id         INT NOT NULL UNIQUE,
+  email       VARCHAR(256) NOT NULL UNIQUE,
   is_admin    BOOLEAN NOT NULL DEFAULT false,
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -55,7 +57,8 @@ CREATE TABLE IF NOT EXISTS answers (
     ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-INSERT INTO users (id, name, is_admin) VALUES (1, "テストユーザー1", false),(2, "テストユーザー2", false),(3, "テストユーザー3", false), (4, "テストユーザー4", false), (5, "テスト管理者", true);
+INSERT INTO users (id, name, google_user_id, email, is_admin) VALUES (1, "テストユーザー1", 1, "test1@example.com", false),(2, "テストユーザー2", 2, "test2@example.com", false),(3, "テストユーザー3", 3, "test3@example.com", false),(4, "テストユーザー4", 4, "test4@example.com", false),(5, "テスト管理者", 5, "test5@example.com", true);
+;
 
 INSERT INTO quizzes (id, name, type) VALUES (1, "Slack", "macOS"), (2, "VSCode", "macOS"), (3, "Chrome", "macOS"), (4, "Github", "macOS");
 
