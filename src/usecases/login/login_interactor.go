@@ -31,7 +31,7 @@ type GoogleUserResult struct {
 	Err      error
 }
 
-func (interactor *LoginInteractor) HandleLogin(code string) (entity.User, error) {
+func (interactor *LoginInteractor) GetUser(code string) (entity.User, error) {
 	res := GetGoogleUser(code)
 	if res.Err != nil {
 		return entity.User{}, res.Err
