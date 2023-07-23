@@ -1,4 +1,4 @@
-package usecase
+package user
 
 import (
 	entity "shortcut_master_api/src/domain"
@@ -8,8 +8,8 @@ type UserInteractor struct {
   UserRepository UserRepository
 }
 
-func (interactor *UserInteractor) Add(u entity.User) {
-	interactor.UserRepository.Store(u)
+func (interactor *UserInteractor) Create(u entity.User) {
+	interactor.UserRepository.Create(u)
 }
 
 func (interactor *UserInteractor) GetInfo() []entity.User {
