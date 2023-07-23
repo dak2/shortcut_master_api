@@ -14,6 +14,15 @@ type LoginRequest struct {
 }
 
 func hello(c echo.Context) error {
+	cookie, err := c.Cookie("session")
+	_ = cookie;
+	if err != nil {
+		if err == http.ErrNoCookie {
+			return c.String(http.StatusUnauthorized, "Cookie doesn't exist")
+		}
+		return err
+	}
+
 	return c.String(http.StatusOK, "Hello, World!")
 }
 
@@ -21,7 +30,7 @@ func Handle(e *echo.Echo) {
 	// for session
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 
-	e.GET("/", hello)
+	e.GET("/hello", hello)
 
 	// -- users -- //
 	e.GET("/users", func(c echo.Context) error {
