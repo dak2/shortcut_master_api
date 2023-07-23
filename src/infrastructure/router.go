@@ -58,6 +58,6 @@ func Handle(e *echo.Echo) {
 			return res.Err
 		}
 
-		return c.JSON(http.StatusOK, res.UserInfo.Email)
+		return c.JSON(http.StatusOK, res.UserInfo.Name)
 	})
 }
