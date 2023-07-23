@@ -4,6 +4,8 @@ import (
 	"net/http"
 	controller "shortcut_master_api/src/interfaces/controllers"
 
+	"github.com/gorilla/sessions"
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
 
@@ -12,11 +14,23 @@ type LoginRequest struct {
 }
 
 func hello(c echo.Context) error {
+	cookie, err := c.Cookie("session")
+	_ = cookie;
+	if err != nil {
+		if err == http.ErrNoCookie {
+			return c.String(http.StatusUnauthorized, "Cookie doesn't exist")
+		}
+		return err
+	}
+
 	return c.String(http.StatusOK, "Hello, World!")
 }
 
 func Handle(e *echo.Echo) {
-	e.GET("/", hello)
+	// for session
+	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
+
+	e.GET("/hello", hello)
 
 	// -- users -- //
 	e.GET("/users", func(c echo.Context) error {
@@ -33,12 +47,17 @@ func Handle(e *echo.Echo) {
 			return err
 		}
 
+		sess, err := session.Get("session", c)
+		if err != nil {
+			return err
+		}
+
 		loginController := controller.NewLoginController(NewSqlHandler())
-		res := loginController.Handle(req.Code)
+		res := loginController.Handle(c, sess, req.Code)
 		if res.Err != nil {
 			return res.Err
 		}
 
-		return c.JSON(http.StatusOK, res.UserInfo.Email)
+		return c.JSON(http.StatusOK, res.UserInfo.Name)
 	})
 }
