@@ -15,7 +15,7 @@ type LoginRequest struct {
 
 func hello(c echo.Context) error {
 	cookie, err := c.Cookie("session")
-	_ = cookie;
+	_ = cookie
 	if err != nil {
 		if err == http.ErrNoCookie {
 			return c.String(http.StatusUnauthorized, "Cookie doesn't exist")
@@ -59,5 +59,20 @@ func Handle(e *echo.Echo) {
 		}
 
 		return c.JSON(http.StatusOK, res.UserInfo.Name)
+	})
+
+	// -- logout -- //
+	e.POST("/logout", func(c echo.Context) error {
+		sess, err := session.Get("session", c)
+		if err != nil {
+			return err
+		}
+
+		sess.Options = &sessions.Options{
+			MaxAge: -1,
+		}
+		sess.Save(c.Request(), c.Response())
+
+		return c.JSON(http.StatusOK, "logout")
 	})
 }
