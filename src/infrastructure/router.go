@@ -18,12 +18,12 @@ func hello(c echo.Context) error {
 	_ = cookie
 	if err != nil {
 		if err == http.ErrNoCookie {
-			return c.String(http.StatusUnauthorized, "Cookie doesn't exist")
+			return c.JSON(http.StatusUnauthorized, "Cookie doesn't exist")
 		}
-		return err
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	return c.String(http.StatusOK, "Hello, World!")
+	return c.JSON(http.StatusOK, "Hello, World!")
 }
 
 func Handle(e *echo.Echo) {
@@ -44,18 +44,18 @@ func Handle(e *echo.Echo) {
 	e.POST("/login", func(c echo.Context) error {
 		req := new(LoginRequest)
 		if err := c.Bind(req); err != nil {
-			return err
+			return c.JSON(http.StatusBadRequest, err)
 		}
 
 		sess, err := session.Get("session", c)
 		if err != nil {
-			return err
+			return c.JSON(http.StatusBadRequest, "Could not get session")
 		}
 
 		loginController := controller.NewLoginController(NewSqlHandler())
 		res := loginController.Handle(c, sess, req.Code)
 		if res.Err != nil {
-			return res.Err
+			return c.JSON(http.StatusBadRequest, res.Err)
 		}
 
 		return c.JSON(http.StatusOK, res.UserInfo.Name)
@@ -65,7 +65,7 @@ func Handle(e *echo.Echo) {
 	e.POST("/logout", func(c echo.Context) error {
 		sess, err := session.Get("session", c)
 		if err != nil {
-			return err
+			return c.JSON(http.StatusBadRequest, "Could not get session")
 		}
 
 		sess.Options = &sessions.Options{
