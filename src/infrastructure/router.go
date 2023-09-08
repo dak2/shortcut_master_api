@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"net/http"
 	controller "shortcut_master_api/src/interfaces/controllers"
+	"shortcut_master_api/src/utils"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
@@ -14,13 +15,9 @@ type LoginRequest struct {
 }
 
 func hello(c echo.Context) error {
-	cookie, err := c.Cookie("session")
-	_ = cookie
+	_, err := utils.GetSessionCookie(c)
 	if err != nil {
-		if err == http.ErrNoCookie {
-			return c.JSON(http.StatusUnauthorized, "Cookie doesn't exist")
-		}
-		return c.JSON(http.StatusBadRequest, err)
+		return err
 	}
 
 	return c.JSON(http.StatusOK, "Hello, World!")
@@ -38,6 +35,19 @@ func Handle(e *echo.Echo) {
 		users := userController.GetUser()
 		c.Bind(&users)
 		return c.JSON(http.StatusOK, users)
+	})
+
+	// -- quizzes -- //
+	e.GET("/quizzes", func(c echo.Context) error {
+		_, err := utils.GetSessionCookie(c)
+		if err != nil {
+			return err
+		}
+
+		quizController := controller.NewQuizzesController(NewSqlHandler())
+		quizzes := quizController.GetQuizzes()
+		c.Bind(&quizzes)
+		return c.JSON(http.StatusOK, quizzes)
 	})
 
 	// -- login -- //
