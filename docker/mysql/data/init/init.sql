@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS answers (
 INSERT INTO users (id, name, google_user_id, email, is_admin) VALUES (1, "テストユーザー1", 1, "test1@example.com", false),(2, "テストユーザー2", 2, "test2@example.com", false),(3, "テストユーザー3", 3, "test3@example.com", false),(4, "テストユーザー4", 4, "test4@example.com", false),(5, "テスト管理者", 5, "test5@example.com", true);
 ;
 
-INSERT INTO quizzes (id, name, type) VALUES (1, "Slack", "macOS"), (2, "VSCode", "macOS"), (3, "Chrome", "macOS"), (4, "Github", "macOS");
+INSERT INTO quizzes (id, name, type) VALUES (1, "Slack", "macOS"), (2, "VSCode", "macOS"), (3, "Chrome", "macOS"), (4, "GitHub", "macOS");
 
 INSERT INTO rankings (quiz_id, user_id, ranking) VALUES (1, 1, 1), (2, 2, 1), (3, 3, 1), (4, 4, 1);
 

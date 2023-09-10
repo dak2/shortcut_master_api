@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/base64"
+	"net/http"
 	repository "shortcut_master_api/src/interfaces/database"
 	loginUsecase "shortcut_master_api/src/usecases/login"
 
@@ -63,6 +64,8 @@ func GenerateSession(ctx echo.Context, sess *sessions.Session, userInfo loginUse
 		Path:     "/",
 		MaxAge:   86400 * 7, // 7 days
 		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
 	}
 	err := sess.Save(ctx.Request(), ctx.Response())
 	if err != nil {
