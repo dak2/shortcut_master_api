@@ -13,6 +13,13 @@ type SqlHandler struct {
 	db *gorm.DB
 }
 
+type SqlHandlerInterface interface {
+	Create(obj interface{}) *gorm.DB
+	FindAll(obj interface{})
+	FindByParams(obj interface{}, column string, params interface{}) *gorm.DB
+	DeleteById(obj interface{}, id string)
+}
+
 func genDbSetting() string {
 	conf := config.Init()
 	// ref : https://gorm.io/ja_JP/docs/connecting_to_the_database.html#MySQL

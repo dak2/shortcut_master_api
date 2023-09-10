@@ -23,6 +23,18 @@ func hello(c echo.Context) error {
 	return c.JSON(http.StatusOK, "Hello, World!")
 }
 
+func quizzes(c echo.Context) error {
+	_, err := utils.GetSessionCookie(c)
+	if err != nil {
+		return err
+	}
+
+	quizController := controller.NewQuizzesController(NewSqlHandler())
+	quizzes := quizController.GetQuizzes()
+	c.Bind(&quizzes)
+	return c.JSON(http.StatusOK, quizzes)
+}
+
 func Handle(e *echo.Echo) {
 	// for session
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
@@ -38,17 +50,7 @@ func Handle(e *echo.Echo) {
 	})
 
 	// -- quizzes -- //
-	e.GET("/quizzes", func(c echo.Context) error {
-		_, err := utils.GetSessionCookie(c)
-		if err != nil {
-			return err
-		}
-
-		quizController := controller.NewQuizzesController(NewSqlHandler())
-		quizzes := quizController.GetQuizzes()
-		c.Bind(&quizzes)
-		return c.JSON(http.StatusOK, quizzes)
-	})
+	e.GET("/quizzes", quizzes)
 
 	// -- login -- //
 	e.POST("/login", func(c echo.Context) error {
