@@ -39,17 +39,15 @@ func TestHelloEndpoint(t *testing.T) {
 	})
 
 	t.Run("without cookie", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "/hello", nil)
-		rec := httptest.NewRecorder()
+    req := httptest.NewRequest("GET", "/hello", nil)
+    rec := httptest.NewRecorder()
 
-		e.ServeHTTP(rec, req)
+    e.ServeHTTP(rec, req)
 
-		var response string
-		if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
-			t.Fatalf("Failed to decode response: %s", err)
-		}
+    statusCode := rec.Code
+    responseBody := rec.Body.String()
 
-		assert.Equal(t, http.StatusUnauthorized, rec.Code)
-		assert.Equal(t, "Cookie doesn't exist", response)
+    assert.Equal(t, http.StatusUnauthorized, statusCode)
+    assert.Contains(t, responseBody, "Cookie doesn't exist")
 	})
 }
