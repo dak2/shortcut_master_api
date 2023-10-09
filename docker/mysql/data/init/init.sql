@@ -49,11 +49,22 @@ CREATE TABLE IF NOT EXISTS answers (
   id          INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   question_id INT NOT NULL,
   contents    VARCHAR(256) NOT NULL,
-  is_correct  BOOLEAN NOT NULL DEFAULT false,
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (question_id)
     REFERENCES questions(id)
+    ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS answer_histories (
+  id          INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  answer_id   INT NOT NULL,
+  contents    VARCHAR(256) NOT NULL,
+  is_correct  BOOLEAN NOT NULL DEFAULT false,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (answer_id)
+    REFERENCES answers(id)
     ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
@@ -62,8 +73,10 @@ INSERT INTO users (id, name, google_user_id, email, is_admin) VALUES (1, "テス
 
 INSERT INTO quizzes (id, name, type) VALUES (1, "Slack", "macOS"), (2, "VSCode", "macOS"), (3, "Chrome", "macOS"), (4, "GitHub", "macOS");
 
+INSERT INTO questions (id, quiz_id, contents) VALUES (1, 1, "メッセージ送信の取り消し"), (2, 1, "検索を開始する"), (3, 1, "別の会話へ移動する"), (4, 1, "履歴で前に戻る"), (5, 1, "DMを閲覧する"), (6, 1, "「後で」のアイテムを表示する"), (7, 1, "チャンネルをブラウズする"), (8, 1, "メッセージを未読にする"), (9, 1, "全未読画面を開く"), (10, 1, "スレッド画面を開く");
+
+INSERT INTO answers (id, question_id, contents) VALUES (1, 1, "⌘+Z"), (2, 2, "⌘+G"), (3, 3, "⌘+K"), (4, 4, "⌘+["), (5, 5, "⌘+Shift+K"), (6, 6, "⌘+Shift+S"), (7, 7, "⌘+Shift+L"), (8, 8, "Option+Click"), (9, 9, "⌘+Shift+A"), (10, 10, "⌘+Shift+T");
+
+-- INSERT INTO answer_histories (id, answer_id, contents, is_correct) VALUES (1, 1, "⌘+Z", true), (2, 2, "⌘+G", false), (3, 3, "⌘+K", false), (4, 4, "⌘+K", false), (5, 5, "⌘+Shift+K", false), (6, 6, "⌘+Shift+S", false), (7, 7, "⌘+Shift+L", false), (8, 8, "Option+Click", false), (9, 9, "⌘+Shift+A", false), (10, 10, "⌘+Shift+T", false);
+
 INSERT INTO rankings (quiz_id, user_id, ranking) VALUES (1, 1, 1), (2, 2, 1), (3, 3, 1), (4, 4, 1);
-
-INSERT INTO questions (id, quiz_id, contents) VALUES (1, 1, "DMを閲覧するには？");
-
-INSERT INTO answers (id, question_id, contents, is_correct) VALUES (1, 1, "⌘+shit+↓", false), (2, 1, "⌘+shit+K", true), (3, 1, "⌘+K", false), (4, 1, "⌘+T", false);
