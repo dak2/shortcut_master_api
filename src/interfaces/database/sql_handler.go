@@ -10,5 +10,6 @@ type SqlHandler interface {
 	Create(object interface{}) *gorm.DB
 	FindAll(object interface{})
 	FindByParams(object interface{}, column string, params interface{}) *gorm.DB
+	FindAllByParams(object interface{}, column string, params interface{}) *gorm.DB
 	DeleteById(object interface{}, id string)
 }
