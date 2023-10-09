@@ -1,7 +1,11 @@
 package database
 
 import (
+	"errors"
+	"fmt"
 	entity "shortcut_master_api/src/domain"
+
+	"gorm.io/gorm"
 )
 
 type QuestionRepository struct {
@@ -14,8 +18,14 @@ func (db *QuestionRepository) Select() []entity.Question {
 	return question
 }
 
-func (db *QuestionRepository) SelectByQuiz(id string) []entity.Question {
+func (db *QuestionRepository) SelectByQuiz(id string) ([]entity.Question, error) {
 	question := []entity.Question{}
-	db.SqlHandler.FindByParams(&question, "quiz_id", id)
-	return question
+	res := db.SqlHandler.FindByParams(&question, "quiz_id", id)
+	if err := res.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return []entity.Question{}, fmt.Errorf("Record not found")
+		}
+		return []entity.Question{}, fmt.Errorf("Failed to get question")
+	}
+	return question, nil
 }

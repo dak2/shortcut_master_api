@@ -5,12 +5,7 @@ import (
 )
 
 type QuestionInteractor struct {
-  QuestionRepository QuestionRepository
-}
-
-// TODO: implement
-func (interactor *QuestionInteractor) Create(u entity.Question) {
-	interactor.QuestionRepository.Create(u)
+	QuestionRepository QuestionRepository
 }
 
 func (interactor *QuestionInteractor) GetQuestions() []entity.Question {
@@ -18,10 +13,9 @@ func (interactor *QuestionInteractor) GetQuestions() []entity.Question {
 }
 
 func (interactor *QuestionInteractor) GetQuestionsByQuiz(id string) ([]entity.Question, error) {
-	return interactor.QuestionRepository.SelectByQuiz(id)
-}
-
-// TODO: implement
-func (interactor *QuestionInteractor) Delete(id string) {
-	interactor.QuestionRepository.Delete(id)
+	questions, err := interactor.QuestionRepository.SelectByQuiz(id)
+	if err != nil {
+		return []entity.Question{}, err
+	}
+	return questions, nil
 }
