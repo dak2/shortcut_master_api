@@ -16,6 +16,7 @@ func Handle(e *echo.Echo) {
 	e.GET("/hello", hello)
 	e.GET("/users", users)
 	e.GET("/quizzes", quizzes)
+	e.GET("/questions", questions)
 	e.POST("/login", login)
 	e.POST("/logout", logout)
 }

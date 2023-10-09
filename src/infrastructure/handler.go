@@ -6,8 +6,8 @@ import (
 	"shortcut_master_api/src/utils"
 
 	"github.com/gorilla/sessions"
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
 )
 
 func hello(c echo.Context) error {
@@ -29,6 +29,19 @@ func quizzes(c echo.Context) error {
 	quizzes := quizController.GetQuizzes()
 	c.Bind(&quizzes)
 	return c.JSON(http.StatusOK, quizzes)
+}
+
+func questions(c echo.Context) error {
+	_, err := utils.GetSessionCookie(c)
+	if err != nil {
+		return err
+	}
+
+	quizId := c.QueryParam("quiz_id")
+	questionController := getQuesionsController()
+	questions := questionController.GetQuestionsByQuiz(quizId)
+	c.Bind(&questions)
+	return c.JSON(http.StatusOK, questions)
 }
 
 func users(c echo.Context) error {
@@ -74,6 +87,10 @@ func logout(c echo.Context) error {
 
 func getQuizzesController() *controller.QuizController {
 	return controller.NewQuizzesController(NewSqlHandler())
+}
+
+func getQuesionsController() *controller.QuestionController {
+	return controller.NewQuesionsController(NewSqlHandler())
 }
 
 func getUsersController() *controller.UserController {
