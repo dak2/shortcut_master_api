@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestHelloEndpoint(t *testing.T) {
@@ -102,6 +103,69 @@ func TestQuizEndpoint(t *testing.T) {
 
 		assert.Len(t, quizzes, 1)
 		assert.Equal(t, "Slack", quizzes[0].Name)
+	})
+
+	t.Run("without session cookie", func(t *testing.T) {
+		e.GET(endpoint, func(c echo.Context) error {
+			return c.JSON(http.StatusUnauthorized, "Cookie doesn't exist")
+		})
+
+		rec := makeRequest(nil)
+
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
+		assert.Contains(t, rec.Body.String(), "Cookie doesn't exist")
+	})
+}
+
+func TestQuestionsEndpoint(t *testing.T) {
+	e := echo.New()
+	endpoint := "/questions"
+	quiz_id := 1
+
+	mockSqlHandler := &SqlHandlerMock{
+		MockFindAllByParams: func(obj interface{}, column string, params interface{}) *gorm.DB {
+			questions := obj.(*[]entity.Question)
+			*questions = []entity.Question{
+				{ID: 1, QuizId: quiz_id, Contents: "メッセージ送信の取り消し"},
+			}
+			return &gorm.DB{}
+		},
+	}
+
+	questionsController := controller.NewQuesionsController(mockSqlHandler)
+
+	makeRequest := func(cookie *http.Cookie) *httptest.ResponseRecorder {
+		req := httptest.NewRequest(http.MethodGet, endpoint, nil)
+		if cookie != nil {
+			req.AddCookie(cookie)
+		}
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+		return rec
+	}
+
+	t.Run("with session cookie", func(t *testing.T) {
+		e.GET(endpoint, func(c echo.Context) error {
+			questions := questionsController.GetQuestionsByQuiz(quiz_id)
+			return c.JSON(http.StatusOK, questions.Questions)
+		})
+
+		cookie := &http.Cookie{
+			Name:  "session",
+			Value: "some-value",
+		}
+
+		rec := makeRequest(cookie)
+
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		var questions []entity.Question
+		if err := json.Unmarshal(rec.Body.Bytes(), &questions); err != nil {
+			t.Fatalf("Failed to decode response: %s", err)
+		}
+
+		assert.Len(t, questions, 1)
+		assert.Equal(t, "メッセージ送信の取り消し", questions[0].Contents)
 	})
 
 	t.Run("without session cookie", func(t *testing.T) {
