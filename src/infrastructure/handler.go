@@ -4,10 +4,11 @@ import (
 	"net/http"
 	controller "shortcut_master_api/src/interfaces/controllers"
 	"shortcut_master_api/src/utils"
+	"strconv"
 
 	"github.com/gorilla/sessions"
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
 )
 
 func hello(c echo.Context) error {
@@ -29,6 +30,32 @@ func quizzes(c echo.Context) error {
 	quizzes := quizController.GetQuizzes()
 	c.Bind(&quizzes)
 	return c.JSON(http.StatusOK, quizzes)
+}
+
+func questions(c echo.Context) error {
+	_, err := utils.GetSessionCookie(c)
+	if err != nil {
+		return err
+	}
+
+	quizIdStr := c.QueryParam("quiz_id")
+	if quizIdStr == "" {
+		return c.JSON(http.StatusBadRequest, "quiz_id is required")
+	}
+
+	quizId, err := strconv.Atoi(quizIdStr)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	questionController := getQuesionsController()
+	questions := questionController.GetQuestionsByQuiz(quizId)
+	if questions.Err != nil {
+		return c.JSON(http.StatusInternalServerError, questions.Err)
+	}
+
+	c.Bind(&questions.Questions)
+	return c.JSON(http.StatusOK, questions)
 }
 
 func users(c echo.Context) error {
@@ -74,6 +101,10 @@ func logout(c echo.Context) error {
 
 func getQuizzesController() *controller.QuizController {
 	return controller.NewQuizzesController(NewSqlHandler())
+}
+
+func getQuesionsController() *controller.QuestionController {
+	return controller.NewQuesionsController(NewSqlHandler())
 }
 
 func getUsersController() *controller.UserController {
