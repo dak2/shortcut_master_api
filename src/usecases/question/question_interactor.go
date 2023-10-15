@@ -12,7 +12,7 @@ func (interactor *QuestionInteractor) GetQuestions() []entity.Question {
 	return interactor.QuestionRepository.Select()
 }
 
-func (interactor *QuestionInteractor) GetQuestionsByQuiz(id string) ([]entity.Question, error) {
+func (interactor *QuestionInteractor) GetQuestionsByQuiz(id int) ([]entity.Question, error) {
 	questions, err := interactor.QuestionRepository.SelectByQuiz(id)
 	if err != nil {
 		return []entity.Question{}, err

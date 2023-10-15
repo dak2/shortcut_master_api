@@ -6,5 +6,5 @@ import entity "shortcut_master_api/src/domain"
 
 type QuestionRepository interface {
 	Select() []entity.Question
-	SelectByQuiz(id string) ([]entity.Question, error)
+	SelectByQuiz(id int) ([]entity.Question, error)
 }

@@ -18,7 +18,7 @@ func (db *QuestionRepository) Select() []entity.Question {
 	return question
 }
 
-func (db *QuestionRepository) SelectByQuiz(id string) ([]entity.Question, error) {
+func (db *QuestionRepository) SelectByQuiz(id int) ([]entity.Question, error) {
 	question := []entity.Question{}
 	res := db.SqlHandler.FindAllByParams(&question, "quiz_id", id)
 	if err := res.Error; err != nil {

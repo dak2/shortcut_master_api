@@ -12,7 +12,7 @@ type QuestionController struct {
 
 type QuestionResult struct {
 	Questions []entity.Question
-	Err 		 	error
+	Err       error
 }
 
 func NewQuesionsController(sqlHandler repository.SqlHandler) *QuestionController {
@@ -25,10 +25,10 @@ func NewQuesionsController(sqlHandler repository.SqlHandler) *QuestionController
 	}
 }
 
-func (controller *QuestionController) GetQuestionsByQuiz(id string) QuestionResult {
+func (controller *QuestionController) GetQuestionsByQuiz(id int) QuestionResult {
 	res := QuestionResult{
 		Questions: []entity.Question{},
-		Err: nil,
+		Err:       nil,
 	}
 
 	questions, err := controller.Interactor.GetQuestionsByQuiz(id)
