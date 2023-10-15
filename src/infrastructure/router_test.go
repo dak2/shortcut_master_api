@@ -145,27 +145,42 @@ func TestQuestionsEndpoint(t *testing.T) {
 	}
 
 	t.Run("with session cookie", func(t *testing.T) {
-		e.GET(endpoint, func(c echo.Context) error {
-			questions := questionsController.GetQuestionsByQuiz(quiz_id)
-			return c.JSON(http.StatusOK, questions.Questions)
+		t.Run("with quiz_id", func(t *testing.T) {
+			e.GET(endpoint, func(c echo.Context) error {
+				questions := questionsController.GetQuestionsByQuiz(quiz_id)
+				return c.JSON(http.StatusOK, questions.Questions)
+			})
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: "some-value",
+			}
+
+			rec := makeRequest(cookie)
+
+			assert.Equal(t, http.StatusOK, rec.Code)
+
+			var questions []entity.Question
+			if err := json.Unmarshal(rec.Body.Bytes(), &questions); err != nil {
+				t.Fatalf("Failed to decode response: %s", err)
+			}
+
+			assert.Len(t, questions, 1)
+			assert.Equal(t, "メッセージ送信の取り消し", questions[0].Contents)
 		})
+		t.Run("without quiz_id", func(t *testing.T) {
+			e.GET(endpoint, func(c echo.Context) error {
+				return c.JSON(http.StatusBadRequest, "quiz_id is required")
+			})
 
-		cookie := &http.Cookie{
-			Name:  "session",
-			Value: "some-value",
-		}
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: "some-value",
+			}
 
-		rec := makeRequest(cookie)
-
-		assert.Equal(t, http.StatusOK, rec.Code)
-
-		var questions []entity.Question
-		if err := json.Unmarshal(rec.Body.Bytes(), &questions); err != nil {
-			t.Fatalf("Failed to decode response: %s", err)
-		}
-
-		assert.Len(t, questions, 1)
-		assert.Equal(t, "メッセージ送信の取り消し", questions[0].Contents)
+			rec := makeRequest(cookie)
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+		})
 	})
 
 	t.Run("without session cookie", func(t *testing.T) {

@@ -39,6 +39,10 @@ func questions(c echo.Context) error {
 	}
 
 	quizIdStr := c.QueryParam("quiz_id")
+	if quizIdStr == "" {
+		return c.JSON(http.StatusBadRequest, "quiz_id is required")
+	}
+
 	quizId, err := strconv.Atoi(quizIdStr)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
