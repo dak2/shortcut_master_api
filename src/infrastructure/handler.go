@@ -4,6 +4,7 @@ import (
 	"net/http"
 	controller "shortcut_master_api/src/interfaces/controllers"
 	"shortcut_master_api/src/utils"
+	"strconv"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
@@ -37,10 +38,19 @@ func questions(c echo.Context) error {
 		return err
 	}
 
-	quizId := c.QueryParam("quiz_id")
+	quizIdStr := c.QueryParam("quiz_id")
+	quizId, err := strconv.Atoi(quizIdStr)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
 	questionController := getQuesionsController()
 	questions := questionController.GetQuestionsByQuiz(quizId)
-	c.Bind(&questions)
+	if questions.Err != nil {
+		return c.JSON(http.StatusInternalServerError, questions.Err)
+	}
+
+	c.Bind(&questions.Questions)
 	return c.JSON(http.StatusOK, questions)
 }
 
