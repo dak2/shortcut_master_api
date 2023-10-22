@@ -120,13 +120,13 @@ func TestQuizEndpoint(t *testing.T) {
 func TestQuestionsEndpoint(t *testing.T) {
 	e := echo.New()
 	endpoint := "/questions"
-	quiz_id := 1
+	quizType := "slack"
 
 	mockSqlHandler := &SqlHandlerMock{
 		MockFindAllByParams: func(obj interface{}, column string, params interface{}) *gorm.DB {
 			questions := obj.(*[]entity.Question)
 			*questions = []entity.Question{
-				{ID: 1, QuizId: quiz_id, Contents: "メッセージ送信の取り消し"},
+				{ID: 1, QuizType: quizType, Contents: "メッセージ送信の取り消し"},
 			}
 			return &gorm.DB{}
 		},
@@ -145,9 +145,9 @@ func TestQuestionsEndpoint(t *testing.T) {
 	}
 
 	t.Run("with session cookie", func(t *testing.T) {
-		t.Run("with quiz_id", func(t *testing.T) {
+		t.Run("with quiz_type", func(t *testing.T) {
 			e.GET(endpoint, func(c echo.Context) error {
-				questions := questionsController.GetQuestionsByQuiz(quiz_id)
+				questions := questionsController.GetQuestionsByQuiz(quizType)
 				return c.JSON(http.StatusOK, questions.Questions)
 			})
 
@@ -168,9 +168,9 @@ func TestQuestionsEndpoint(t *testing.T) {
 			assert.Len(t, questions, 1)
 			assert.Equal(t, "メッセージ送信の取り消し", questions[0].Contents)
 		})
-		t.Run("without quiz_id", func(t *testing.T) {
+		t.Run("without quiz_type", func(t *testing.T) {
 			e.GET(endpoint, func(c echo.Context) error {
-				return c.JSON(http.StatusBadRequest, "quiz_id is required")
+				return c.JSON(http.StatusBadRequest, "quiz_type is required")
 			})
 
 			cookie := &http.Cookie{
