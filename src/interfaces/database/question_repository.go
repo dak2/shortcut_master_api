@@ -18,9 +18,9 @@ func (db *QuestionRepository) Select() []entity.Question {
 	return question
 }
 
-func (db *QuestionRepository) SelectByQuiz(id int) ([]entity.Question, error) {
+func (db *QuestionRepository) SelectByQuiz(quizType string) ([]entity.Question, error) {
 	question := []entity.Question{}
-	res := db.SqlHandler.FindAllByParams(&question, "quiz_id", id)
+	res := db.SqlHandler.FindAllByParams(&question, "quiz_type", quizType)
 	if err := res.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return []entity.Question{}, fmt.Errorf("Record not found")

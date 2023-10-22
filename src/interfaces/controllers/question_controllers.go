@@ -25,13 +25,13 @@ func NewQuesionsController(sqlHandler repository.SqlHandler) *QuestionController
 	}
 }
 
-func (controller *QuestionController) GetQuestionsByQuiz(id int) QuestionResult {
+func (controller *QuestionController) GetQuestionsByQuiz(quizType string) QuestionResult {
 	res := QuestionResult{
 		Questions: []entity.Question{},
 		Err:       nil,
 	}
 
-	questions, err := controller.Interactor.GetQuestionsByQuiz(id)
+	questions, err := controller.Interactor.GetQuestionsByQuiz(quizType)
 
 	if err != nil {
 		res.Err = err

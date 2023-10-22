@@ -4,8 +4,6 @@ import (
 	"net/http"
 	controller "shortcut_master_api/src/interfaces/controllers"
 	"shortcut_master_api/src/utils"
-	"strconv"
-
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
@@ -14,7 +12,7 @@ import (
 func hello(c echo.Context) error {
 	_, err := utils.GetSessionCookie(c)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusUnauthorized, err)
 	}
 
 	return c.JSON(http.StatusOK, "Hello, World!")
@@ -23,7 +21,7 @@ func hello(c echo.Context) error {
 func quizzes(c echo.Context) error {
 	_, err := utils.GetSessionCookie(c)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusUnauthorized, err)
 	}
 
 	quizController := getQuizzesController()
@@ -35,27 +33,22 @@ func quizzes(c echo.Context) error {
 func questions(c echo.Context) error {
 	_, err := utils.GetSessionCookie(c)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusUnauthorized, err)
 	}
 
-	quizIdStr := c.QueryParam("quiz_id")
-	if quizIdStr == "" {
-		return c.JSON(http.StatusBadRequest, "quiz_id is required")
-	}
-
-	quizId, err := strconv.Atoi(quizIdStr)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+	quizType := c.QueryParam("quiz_type")
+	if quizType == "" {
+		return c.JSON(http.StatusBadRequest, "quiz_type is required")
 	}
 
 	questionController := getQuesionsController()
-	questions := questionController.GetQuestionsByQuiz(quizId)
+	questions := questionController.GetQuestionsByQuiz(quizType)
 	if questions.Err != nil {
 		return c.JSON(http.StatusInternalServerError, questions.Err)
 	}
 
 	c.Bind(&questions.Questions)
-	return c.JSON(http.StatusOK, questions)
+	return c.JSON(http.StatusOK, questions.Questions)
 }
 
 func users(c echo.Context) error {
@@ -73,7 +66,7 @@ func login(c echo.Context) error {
 
 	sess, err := session.Get("session", c)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, "Could not get session")
+		return c.JSON(http.StatusUnauthorized, "Could not get session")
 	}
 
 	loginController := getLoginController()
@@ -88,7 +81,7 @@ func login(c echo.Context) error {
 func logout(c echo.Context) error {
 	sess, err := session.Get("session", c)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, "Could not get session")
+		return c.JSON(http.StatusUnauthorized, "Could not get session")
 	}
 
 	sess.Options = &sessions.Options{
