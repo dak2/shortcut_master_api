@@ -16,7 +16,7 @@ func (interactor *AnswerHistoryInteractor) GetAnswerHistories(quizType string) (
 	return answerHistories, nil
 }
 
-func (interactor *AnswerHistoryInteractor) CreateAnswerHistories(answers []entity.AnswerHistory) error {
+func (interactor *AnswerHistoryInteractor) CreateAnswerHistories(answers []entity.AnswerHistory) (error) {
 	err := interactor.AnswerHistoryRepository.InsertAnswerHistories(answers)
 	if err != nil {
 		return err

@@ -12,20 +12,20 @@ type AnswerHistoryRepository struct {
 	SqlHandler SqlHandler
 }
 
-func (db *AnswerHistoryRepository) SelectAnswerHistories(quizType string) ([]entity.Answer, error) {
-	answers := []entity.Answer{}
-	res := db.SqlHandler.FindAllByParams(&answers, "quiz_type", quizType)
+func (db *AnswerHistoryRepository) SelectAnswerHistories(quizType string) ([]entity.AnswerHistory, error) {
+	answerHistories := []entity.AnswerHistory{}
+	res := db.SqlHandler.FindAllByParams(&answerHistories, "quiz_type", quizType)
 	if err := res.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return []entity.Answer{}, fmt.Errorf("Record not found")
+			return []entity.AnswerHistory{}, fmt.Errorf("Record not found")
 		}
-		return []entity.Answer{}, fmt.Errorf("Failed to get question")
+		return []entity.AnswerHistory{}, fmt.Errorf("Failed to get question")
 	}
-	return answers, nil
+	return answerHistories, nil
 }
 
-func (db *AnswerHistoryRepository) InsertAnswerHistories(answers []entity.Answer) (error) {
-	res := db.SqlHandler.Create(&answers)
+func (db *AnswerHistoryRepository) InsertAnswerHistories(answerHistories []entity.AnswerHistory) (error) {
+	res := db.SqlHandler.Create(&answerHistories)
 	if err := res.Error; err != nil {
 		return fmt.Errorf("Failed to create answer")
 	}
