@@ -8,10 +8,10 @@ type AnswerInteractor struct {
 	AnswerRepository AnswerRepository
 }
 
-func (interactor *AnswerInteractor) GetAnswersByQuizType(quizType string) ([]entity.Answer, error) {
-	questions, err := interactor.AnswerRepository.SelectAnswersByQuizType(quizType)
+func (interactor *AnswerInteractor) GetAnswers(quizType string) ([]entity.Answer, error) {
+	answers, err := interactor.AnswerRepository.SelectAnswers(quizType)
 	if err != nil {
 		return []entity.Answer{}, err
 	}
-	return questions, nil
+	return answers, nil
 }

@@ -12,7 +12,7 @@ type AnswerRepository struct {
 	SqlHandler SqlHandler
 }
 
-func (db *AnswerRepository) SelectAnswersByQuizType(quizType string) ([]entity.Answer, error) {
+func (db *AnswerRepository) SelectAnswers(quizType string) ([]entity.Answer, error) {
 	answers := []entity.Answer{}
 	res := db.SqlHandler.FindAllByParams(&answers, "quiz_type", quizType)
 	if err := res.Error; err != nil {
