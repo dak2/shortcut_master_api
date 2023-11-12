@@ -42,7 +42,7 @@ func NewSqlHandler() *SqlHandler {
 }
 
 func (handler *SqlHandler) Create(obj interface{}) *gorm.DB {
-	res := handler.db.Create(&obj)
+	res := handler.db.Create(obj)
 	return res
 }
 
