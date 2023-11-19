@@ -5,6 +5,7 @@ import (
 	entity "shortcut_master_api/src/domain"
 	controller "shortcut_master_api/src/interfaces/controllers"
 	"shortcut_master_api/src/utils"
+
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
@@ -15,8 +16,8 @@ type LoginRequest struct {
 }
 
 type AnswerHistoryRequest struct {
-	QuizType string `json:"quiz_type"`
-	Answers []entity.AnswerHistoryUpdateRequest `json:"answers"`
+	QuizType string                              `json:"quiz_type"`
+	Answers  []entity.AnswerHistoryUpdateRequest `json:"answers"`
 }
 
 func hello(c echo.Context) error {
@@ -77,6 +78,14 @@ func answers(c echo.Context) error {
 	req := new(AnswerHistoryRequest)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	if req.QuizType == "" {
+		return c.JSON(http.StatusBadRequest, "quiz_type is required")
+	}
+
+	if len(req.Answers) == 0 {
+		return c.JSON(http.StatusBadRequest, "answers is required")
 	}
 
 	answerHistoriesController := getAnswerHistoriesController()
