@@ -8,5 +8,5 @@ import (
 
 type AnswerHistoryRepository interface {
 	SelectAnswerHistories(quizType string) ([]entity.AnswerHistory, error)
-	InsertAnswerHistories(answers []entity.AnswerHistory) (error)
+	InsertAnswerHistories(answers []entity.AnswerHistory) ([]entity.AnswerHistory, error)
 }

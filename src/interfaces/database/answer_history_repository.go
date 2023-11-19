@@ -24,10 +24,10 @@ func (db *AnswerHistoryRepository) SelectAnswerHistories(quizType string) ([]ent
 	return answerHistories, nil
 }
 
-func (db *AnswerHistoryRepository) InsertAnswerHistories(answerHistories []entity.AnswerHistory) (error) {
+func (db *AnswerHistoryRepository) InsertAnswerHistories(answerHistories []entity.AnswerHistory) ([]entity.AnswerHistory, error) {
 	res := db.SqlHandler.Create(&answerHistories)
 	if err := res.Error; err != nil {
-		return fmt.Errorf("Failed to create answer")
+		return []entity.AnswerHistory{}, fmt.Errorf("Failed to create answer")
 	}
-	return nil
+	return answerHistories, nil
 }

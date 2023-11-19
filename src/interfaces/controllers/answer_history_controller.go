@@ -64,10 +64,12 @@ func (controller *AnswerHistoryController) CreateAnswerHistory(quizType string, 
 		return res
 	}
 
-	if err := controller.AnswerHistoryInteractor.CreateAnswerHistories(answers, requestAnswerHistories); err != nil {
+	answeredHistories, err := controller.AnswerHistoryInteractor.CreateAnswerHistories(answers, requestAnswerHistories)
+	if err != nil {
 		res.Err = err
 		return res
 	}
 
+	res.AnswerHistories = answeredHistories
 	return res
 }

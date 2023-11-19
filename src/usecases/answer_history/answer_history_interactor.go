@@ -1,6 +1,7 @@
 package answer_history
 
 import (
+	"fmt"
 	entity "shortcut_master_api/src/domain"
 )
 
@@ -16,18 +17,18 @@ func (interactor *AnswerHistoryInteractor) GetAnswerHistories(quizType string) (
 	return answerHistories, nil
 }
 
-func (interactor *AnswerHistoryInteractor) CreateAnswerHistories(answers []entity.Answer, answerHistories []entity.AnswerHistoryUpdateRequest) error {
+func (interactor *AnswerHistoryInteractor) CreateAnswerHistories(answers []entity.Answer, answerHistories []entity.AnswerHistoryUpdateRequest) ([]entity.AnswerHistory, error) {
 
 	filterAnswerHistories := filterAnswerHistories(answers, answerHistories)
-	if filterAnswerHistories == nil {
-		return nil
+	if len(filterAnswerHistories) == 0 {
+		return []entity.AnswerHistory{}, fmt.Errorf("Failed to create answer")
 	}
 
-	err := interactor.AnswerHistoryRepository.InsertAnswerHistories(filterAnswerHistories)
+	answeredHistories, err := interactor.AnswerHistoryRepository.InsertAnswerHistories(filterAnswerHistories)
 	if err != nil {
-		return err
+		return []entity.AnswerHistory{}, err
 	}
-	return nil
+	return answeredHistories, nil
 }
 
 func filterAnswerHistories(answers []entity.Answer, answerHistories []entity.AnswerHistoryUpdateRequest) []entity.AnswerHistory {
