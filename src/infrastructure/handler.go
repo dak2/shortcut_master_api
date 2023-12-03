@@ -88,8 +88,8 @@ func answers(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "answers is required")
 	}
 
-	answerHistoriesController := getAnswerHistoriesController()
-	answerHistories := answerHistoriesController.CreateAnswerHistory(req.QuizType, req.Answers)
+	answerController := getAnswerController()
+	answerHistories := answerController.CreateAnswerHistory(req.QuizType, req.Answers)
 	if answerHistories.Err != nil {
 		return c.JSON(http.StatusInternalServerError, answerHistories.Err)
 	}
@@ -140,8 +140,8 @@ func getQuesionsController() *controller.QuestionController {
 	return controller.NewQuesionsController(NewSqlHandler())
 }
 
-func getAnswerHistoriesController() *controller.AnswerHistoryController {
-	return controller.NewAnswerHistoryController(NewSqlHandler())
+func getAnswerController() *controller.AnswerController {
+	return controller.NewAnswerController(NewSqlHandler())
 }
 
 func getUsersController() *controller.UserController {

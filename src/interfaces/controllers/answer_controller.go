@@ -7,18 +7,18 @@ import (
 	answerHistoryUsecase "shortcut_master_api/src/usecases/answer_history"
 )
 
-type AnswerHistoryController struct {
+type AnswerController struct {
 	AnswerInteractor        answerUsecase.AnswerInteractor
 	AnswerHistoryInteractor answerHistoryUsecase.AnswerHistoryInteractor
 }
 
-type AnswerHistoryResult struct {
+type AnswerResult struct {
 	AnswerHistories []entity.AnswerHistory
 	Err             error
 }
 
-func NewAnswerHistoryController(sqlHandler repository.SqlHandler) *AnswerHistoryController {
-	return &AnswerHistoryController{
+func NewAnswerController(sqlHandler repository.SqlHandler) *AnswerController {
+	return &AnswerController{
 		AnswerInteractor: answerUsecase.AnswerInteractor{
 			AnswerRepository: &repository.AnswerRepository{
 				SqlHandler: sqlHandler,
@@ -32,8 +32,8 @@ func NewAnswerHistoryController(sqlHandler repository.SqlHandler) *AnswerHistory
 	}
 }
 
-func (controller *AnswerHistoryController) GetAnswerHistories(quizType string) AnswerHistoryResult {
-	res := AnswerHistoryResult{
+func (controller *AnswerController) GetAnswerHistories(quizType string) AnswerResult {
+	res := AnswerResult{
 		AnswerHistories: []entity.AnswerHistory{},
 		Err:             nil,
 	}
@@ -50,8 +50,8 @@ func (controller *AnswerHistoryController) GetAnswerHistories(quizType string) A
 	return res
 }
 
-func (controller *AnswerHistoryController) CreateAnswerHistory(quizType string, requestAnswerHistories []entity.AnswerHistoryUpdateRequest) AnswerHistoryResult {
-	res := AnswerHistoryResult{
+func (controller *AnswerController) CreateAnswerHistory(quizType string, requestAnswerHistories []entity.AnswerHistoryUpdateRequest) AnswerResult {
+	res := AnswerResult{
 		AnswerHistories: []entity.AnswerHistory{},
 		Err:             nil,
 	}
