@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS questions (
 CREATE TABLE IF NOT EXISTS answers (
   id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   question_id INT NOT NULL,
+  quiz_type VARCHAR(256) NOT NULL,
   contents VARCHAR(256) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -53,8 +54,8 @@ CREATE TABLE IF NOT EXISTS answers (
 CREATE TABLE IF NOT EXISTS answer_histories (
   id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   answer_id INT NOT NULL,
-  contents VARCHAR(256) NOT NULL,
   is_correct BOOLEAN NOT NULL DEFAULT false,
+  contents VARCHAR(256) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (answer_id) REFERENCES answers(id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -92,18 +93,18 @@ VALUES
   (10, 1, 'slack', "スレッド画面を開く");
 
 INSERT INTO
-  answers (id, question_id, contents)
+  answers (id, question_id, quiz_type, contents)
 VALUES
-  (1, 1, "⌘+Z"),
-  (2, 2, "⌘+G"),
-  (3, 3, "⌘+K"),
-  (4, 4, "⌘+["),
-  (5, 5, "⌘+Shift+K"),
-  (6, 6, "⌘+Shift+S"),
-  (7, 7, "⌘+Shift+L"),
-  (8, 8, "Option+Click"),
-  (9, 9, "⌘+Shift+A"),
-  (10, 10, "⌘+Shift+T");
+  (1, 1, 'slack', "⌘+Z"),
+  (2, 2, 'slack', "⌘+G"),
+  (3, 3, 'slack', "⌘+K"),
+  (4, 4, 'slack', "⌘+["),
+  (5, 5, 'slack', "⌘+Shift+K"),
+  (6, 6, 'slack', "⌘+Shift+S"),
+  (7, 7, 'slack', "⌘+Shift+L"),
+  (8, 8, 'slack', "Option+Click"),
+  (9, 9, 'slack', "⌘+Shift+A"),
+  (10, 10, 'slack', "⌘+Shift+T");
 
 -- INSERT INTO answer_histories (id, answer_id, contents, is_correct) VALUES (1, 1, "⌘+Z", true), (2, 2, "⌘+G", false), (3, 3, "⌘+K", false), (4, 4, "⌘+K", false), (5, 5, "⌘+Shift+K", false), (6, 6, "⌘+Shift+S", false), (7, 7, "⌘+Shift+L", false), (8, 8, "Option+Click", false), (9, 9, "⌘+Shift+A", false), (10, 10, "⌘+Shift+T", false);
 INSERT INTO

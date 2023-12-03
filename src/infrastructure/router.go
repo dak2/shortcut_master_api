@@ -6,10 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type LoginRequest struct {
-	Code string `json:"code"`
-}
-
 func Handle(e *echo.Echo) {
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 
@@ -17,6 +13,7 @@ func Handle(e *echo.Echo) {
 	e.GET("/users", users)
 	e.GET("/quizzes", quizzes)
 	e.GET("/questions", questions)
+	e.POST("/answers", answers)
 	e.POST("/login", login)
 	e.POST("/logout", logout)
 }
