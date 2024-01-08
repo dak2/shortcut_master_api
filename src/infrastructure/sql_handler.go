@@ -17,7 +17,7 @@ type SqlHandlerInterface interface {
 	Create(obj interface{}) *gorm.DB
 	FindAll(obj interface{})
 	FindByParams(obj interface{}, column string, params interface{}) *gorm.DB
-	FindAllByParams(obj interface{}, column string, params interface{}) *gorm.DB
+	FindAllByParams(obj interface{}, column interface{}, params interface{}) *gorm.DB
 	DeleteById(obj interface{}, id string)
 }
 
@@ -56,7 +56,7 @@ func (handler *SqlHandler) FindByParams(obj interface{}, column string, params i
 	return res
 }
 
-func (handler *SqlHandler) FindAllByParams(obj interface{}, column string, params interface{}) *gorm.DB {
+func (handler *SqlHandler) FindAllByParams(obj interface{}, column interface{}, params interface{}) *gorm.DB {
 	columnCondition := fmt.Sprintf("%s = ?", column)
 	res := handler.db.Where(columnCondition, params).Find(obj)
 	return res
