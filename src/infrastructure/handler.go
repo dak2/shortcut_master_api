@@ -69,6 +69,23 @@ func users(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
+func answerHistories(c echo.Context) error {
+	_, err := utils.GetSessionCookie(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, err)
+	}
+
+	quizType := c.QueryParam("quiz_type")
+	if quizType == "" {
+		return c.JSON(http.StatusBadRequest, "quiz_type is required")
+	}
+
+	answerHistoryController := getAnswerHistoryController()
+	answerHistories := answerHistoryController.GetAnswerHistories(quizType)
+	c.Bind(&answerHistories)
+	return c.JSON(http.StatusOK, answerHistories)
+}
+
 func answers(c echo.Context) error {
 	_, err := utils.GetSessionCookie(c)
 	if err != nil {
@@ -142,6 +159,10 @@ func getQuesionsController() *controller.QuestionController {
 
 func getAnswerController() *controller.AnswerController {
 	return controller.NewAnswerController(NewSqlHandler())
+}
+
+func getAnswerHistoryController() *controller.AnswerHistoryController {
+	return controller.NewAnswerHistoryController(NewSqlHandler())
 }
 
 func getUsersController() *controller.UserController {
