@@ -3,13 +3,11 @@ package controllers
 import (
 	entity "shortcut_master_api/src/domain"
 	repository "shortcut_master_api/src/interfaces/database"
-	answerUsecase "shortcut_master_api/src/usecases/answer"
-	answerHistoryUsecase "shortcut_master_api/src/usecases/answer_history"
+	usecase "shortcut_master_api/src/usecases/answer_history"
 )
 
 type AnswerHistoryController struct {
-	AnswerInteractor        answerUsecase.AnswerInteractor
-	AnswerHistoryInteractor answerHistoryUsecase.AnswerHistoryInteractor
+	Interactor usecase.AnswerHistoryInteractor
 }
 
 type AnswerHistoryResult struct {
@@ -19,7 +17,7 @@ type AnswerHistoryResult struct {
 
 func NewAnswerHistoryController(sqlHandler repository.SqlHandler) *AnswerHistoryController {
 	return &AnswerHistoryController{
-		AnswerHistoryInteractor: answerHistoryUsecase.AnswerHistoryInteractor{
+		Interactor: usecase.AnswerHistoryInteractor{
 			AnswerHistoryRepository: &repository.AnswerHistoryRepository{
 				SqlHandler: sqlHandler,
 			},
@@ -27,19 +25,18 @@ func NewAnswerHistoryController(sqlHandler repository.SqlHandler) *AnswerHistory
 	}
 }
 
-func (controller *AnswerController) GetAnswerHistories(quizType string) AnswerHistoryResult {
+func (controller *AnswerHistoryController) GetAnswerHistories(quizType string) AnswerHistoryResult {
 	res := AnswerHistoryResult{
 		AnswerHistories: []entity.AnswerHistory{},
 		Err:             nil,
 	}
 
-	answerHistories, err := controller.AnswerHistoryInteractor.GetAnswerHistories(quizType)
+	answerHistories, err := controller.Interactor.GetAnswerHistories(quizType)
 	if err != nil {
 		res.Err = err
 		return res
 	}
 
 	res.AnswerHistories = answerHistories
-
 	return res
 }

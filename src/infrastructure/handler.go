@@ -81,9 +81,13 @@ func answerHistories(c echo.Context) error {
 	}
 
 	answerHistoryController := getAnswerHistoryController()
-	answerHistories := answerHistoryController.GetAnswerHistories(quizType)
-	c.Bind(&answerHistories)
-	return c.JSON(http.StatusOK, answerHistories)
+	res := answerHistoryController.GetAnswerHistories(quizType)
+	if res.Err != nil {
+		return c.JSON(http.StatusInternalServerError, res.Err)
+	}
+
+	c.Bind(&res.AnswerHistories)
+	return c.JSON(http.StatusOK, res.AnswerHistories)
 }
 
 func answers(c echo.Context) error {
