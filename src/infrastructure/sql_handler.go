@@ -18,6 +18,7 @@ type SqlHandlerInterface interface {
 	FindAll(obj interface{})
 	FindByParams(obj interface{}, column string, params interface{}) *gorm.DB
 	FindAllByParams(obj interface{}, column interface{}, params interface{}) *gorm.DB
+	FindAllByParamsWithRelation(obj interface{}, params []map[string]interface{}, relations []map[string]interface{}) *gorm.DB
 	DeleteById(obj interface{}, id string)
 }
 
@@ -59,6 +60,49 @@ func (handler *SqlHandler) FindByParams(obj interface{}, column string, params i
 func (handler *SqlHandler) FindAllByParams(obj interface{}, column interface{}, params interface{}) *gorm.DB {
 	columnCondition := fmt.Sprintf("%s = ?", column)
 	res := handler.db.Where(columnCondition, params).Find(obj)
+	return res
+}
+
+func (handler *SqlHandler) FindAllByParamsWithRelation(obj interface{}, params []map[string]interface{}, relations []map[string]interface{}) *gorm.DB {
+	if len(relations) == 0 {
+		return &gorm.DB{}
+	}
+
+	var table, column, condition, key string
+	for _, relation := range relations {
+		fmt.Println(relation["relation"])
+		for _, r := range relation["relation"].([]map[string]interface{}) {
+			table = r["table"].(string)
+			key = r["relation_key"].(string)
+			where := r["where"].([]map[string]interface{})
+			for _, w := range where {
+				column = w["column"].(string)
+				condition = w["condition"].(string)
+			}
+		}
+	}
+
+	var selfTable, selfKey string
+	for _, r := range relations {
+		s, ok := r["self"].(map[string]interface{})
+		if !ok {
+			continue
+		}
+		selfTable = s["table"].(string)
+		selfKey = s["relation_key"].(string)
+	}
+
+	var order string
+	var limit int
+	for _, p := range params {
+		order = p["order"].(string)
+		limit = p["limit"].(int)
+	}
+
+	joinQuery := fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s", table, table, key, selfTable, selfKey)
+	conditionQuery := fmt.Sprintf("%s.%s = ?", table, column)
+	orderQuery := fmt.Sprintf("%s.%s", table, order)
+	res := handler.db.Joins(joinQuery).Where(conditionQuery, condition).Order(orderQuery).Limit(limit).Find(obj)
 	return res
 }
 
