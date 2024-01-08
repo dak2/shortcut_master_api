@@ -125,7 +125,7 @@ func TestQuestionsEndpoint(t *testing.T) {
 	quizType := "slack"
 
 	mockSqlHandler := &SqlHandlerMock{
-		MockFindAllByParams: func(obj interface{}, column string, params interface{}) *gorm.DB {
+		MockFindAllByParams: func(obj interface{}, column interface{}, params interface{}) *gorm.DB {
 			questions := obj.(*[]entity.Question)
 			*questions = []entity.Question{
 				{ID: 1, QuizType: quizType, Contents: "メッセージ送信の取り消し"},
@@ -206,7 +206,7 @@ func TestAnswersEndpoint(t *testing.T) {
 	}
 
 	mockSqlHandler := &SqlHandlerMock{
-		MockFindAllByParams: func(obj interface{}, column string, params interface{}) *gorm.DB {
+		MockFindAllByParams: func(obj interface{}, column interface{}, params interface{}) *gorm.DB {
 			answers := obj.(*[]entity.Answer)
 			*answers = []entity.Answer{
 				{ID: 1, QuestionId: 1, Contents: "⌘+Z"},
