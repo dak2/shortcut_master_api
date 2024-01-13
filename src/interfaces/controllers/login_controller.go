@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/base64"
 	"net/http"
-	repository "shortcut_master_api/src/interfaces/database"
+	repository "shortcut_master_api/src/interfaces/repositories"
 	loginUsecase "shortcut_master_api/src/usecases/login"
 
 	"github.com/gorilla/sessions"
