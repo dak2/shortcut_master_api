@@ -2,7 +2,7 @@ package user
 
 import entity "shortcut_master_api/src/domain"
 
-// MEMO : for dip
+// MEMO : for di
 
 type UserRepository interface {
 	Create(entity.User) (entity.User, error)

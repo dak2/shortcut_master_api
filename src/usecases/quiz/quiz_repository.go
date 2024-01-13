@@ -2,7 +2,7 @@ package quiz
 
 import entity "shortcut_master_api/src/domain"
 
-// MEMO : for dip
+// MEMO : for di
 
 type QuizRepository interface {
 	Create(entity.Quiz) (entity.Quiz, error) // TODO: implement
