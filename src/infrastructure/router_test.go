@@ -251,7 +251,7 @@ func TestAnswersEndpoint(t *testing.T) {
 
 				reqBody := AnswerHistoryRequest{
 					QuizType: quizType,
-					Answers: answerHistoryRequest,
+					Answers:  answerHistoryRequest,
 				}
 
 				e.POST(endpoint, func(c echo.Context) error {
@@ -302,12 +302,73 @@ func TestAnswersEndpoint(t *testing.T) {
 
 		reqBody := AnswerHistoryRequest{
 			QuizType: quizType,
-			Answers: answerHistoryRequest,
+			Answers:  answerHistoryRequest,
 		}
 
 		rec := makeRequest(nil, reqBody)
 
 		assert.Equal(t, http.StatusUnauthorized, rec.Code)
 		assert.Contains(t, rec.Body.String(), "Cookie doesn't exist")
+	})
+}
+
+func TestAnswerHistoriesEndpoint(t *testing.T) {
+	e := echo.New()
+	endpoint := "/answer_histories"
+	quizType := "slack"
+
+	mockSqlHandler := &SqlHandlerMock{
+		MockFindAllByParamsWithRelation: func(obj interface{}, params []map[string]interface{}, relations []map[string]interface{}) *gorm.DB {
+			answerHistories := obj.(*[]entity.AnswerHistory)
+			*answerHistories = []entity.AnswerHistory{
+				{AnswerId: 1, IsCorrect: true, Contents: "⌘+Z"},
+			}
+			return &gorm.DB{}
+		},
+	}
+
+	answerHistoryController := controller.NewAnswerHistoryController(mockSqlHandler)
+
+	makeRequest := func(cookie *http.Cookie) *httptest.ResponseRecorder {
+		req := httptest.NewRequest(http.MethodGet, endpoint, nil)
+		if cookie != nil {
+			req.AddCookie(cookie)
+		}
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+		return rec
+	}
+
+	cookie := &http.Cookie{
+		Name:  "session",
+		Value: "some-value",
+	}
+
+	t.Run("with session cookie", func(t *testing.T) {
+		t.Run("with quiz_type", func(t *testing.T) {
+			e.GET(endpoint, func(c echo.Context) error {
+				answerHistories := answerHistoryController.GetAnswerHistories(quizType)
+				return c.JSON(http.StatusOK, answerHistories.AnswerHistories)
+			})
+
+			rec := makeRequest(cookie)
+			assert.Equal(t, http.StatusOK, rec.Code)
+
+			var answerHistories []entity.AnswerHistory
+			if err := json.Unmarshal(rec.Body.Bytes(), &answerHistories); err != nil {
+				t.Fatalf("Failed to decode response: %s", err)
+			}
+
+			assert.Len(t, answerHistories, 1)
+			assert.Equal(t, "⌘+Z", answerHistories[0].Contents)
+		})
+		t.Run("without quiz_type", func(t *testing.T) {
+			e.GET(endpoint, func(c echo.Context) error {
+				return c.JSON(http.StatusBadRequest, "quiz_type is required")
+			})
+
+			rec := makeRequest(cookie)
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+		})
 	})
 }
