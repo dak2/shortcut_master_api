@@ -9,6 +9,7 @@ type SqlHandlerMock struct {
 	MockFindAll         func(obj interface{})
 	MockFindByParams    func(obj interface{}, column string, params interface{}) *gorm.DB
 	MockFindAllByParams func(obj interface{}, column interface{}, params interface{}) *gorm.DB
+	MockFindAllByParamsWithRelation func(obj interface{}, params []map[string]interface{}, relations []map[string]interface{}) *gorm.DB
 	MockDeleteById      func(obj interface{}, id string)
 }
 
@@ -26,6 +27,10 @@ func (m *SqlHandlerMock) FindByParams(obj interface{}, column string, params int
 
 func (m *SqlHandlerMock) FindAllByParams(obj interface{}, column interface{}, params interface{}) *gorm.DB {
 	return m.MockFindAllByParams(obj, column, params)
+}
+
+func (m *SqlHandlerMock) FindAllByParamsWithRelation(obj interface{}, params []map[string]interface{}, relations []map[string]interface{}) *gorm.DB {
+	return m.MockFindAllByParamsWithRelation(obj, params, relations)
 }
 
 func (m *SqlHandlerMock) DeleteById(obj interface{}, id string) {

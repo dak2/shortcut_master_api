@@ -10,3 +10,5 @@ type AnswerHistoryUpdateRequest struct {
 	AnswerId int    `json:"answer_id"`
 	Contents string `json:"contents"`
 }
+
+var AnswerHistoryLatestUnitSize = 10

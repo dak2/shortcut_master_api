@@ -14,7 +14,10 @@ type AnswerHistoryRepository struct {
 
 func (db *AnswerHistoryRepository) SelectAnswerHistories(quizType string) ([]entity.AnswerHistory, error) {
 	answerHistories := []entity.AnswerHistory{}
-	res := db.SqlHandler.FindAllByParams(&answerHistories, "quiz_type", quizType)
+	params := generateAnswerHistoryParams()
+	relationParams := generateAnswerHistoryRelationParams(quizType)
+
+	res := db.SqlHandler.FindAllByParamsWithRelation(&answerHistories, params, relationParams)
 	if err := res.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return []entity.AnswerHistory{}, fmt.Errorf("Record not found")
@@ -30,4 +33,38 @@ func (db *AnswerHistoryRepository) InsertAnswerHistories(answerHistories []entit
 		return []entity.AnswerHistory{}, fmt.Errorf("Failed to create answer")
 	}
 	return answerHistories, nil
+}
+
+func generateAnswerHistoryParams() []map[string]interface{} {
+	var params []map[string]interface{}
+
+	params = append(params, map[string]interface{}{
+		"order": "id desc",
+		"limit": entity.AnswerHistoryLatestUnitSize,
+	})
+
+	return params
+}
+
+func generateAnswerHistoryRelationParams(quizType string) []map[string]interface{} {
+	var params []map[string]interface{}
+	var relationParams []map[string]interface{}
+	var conditionParams []map[string]interface{}
+
+	params = append(params, map[string]interface{}{
+		"self": map[string]interface{}{
+			"table":        "answer_histories",
+			"relation_key": "answer_id",
+		},
+		"relation": append(relationParams, map[string]interface{}{
+			"table": "answers",
+			"where": append(conditionParams, map[string]interface{}{
+				"column":    "quiz_type",
+				"condition": quizType,
+			}),
+			"relation_key": "id",
+		}),
+	})
+
+	return params
 }

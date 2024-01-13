@@ -11,5 +11,6 @@ type SqlHandler interface {
 	FindAll(object interface{})
 	FindByParams(object interface{}, column string, params interface{}) *gorm.DB
 	FindAllByParams(object interface{}, column interface{}, params interface{}) *gorm.DB
+	FindAllByParamsWithRelation(obj interface{}, params []map[string]interface{}, relations []map[string]interface{}) *gorm.DB
 	DeleteById(object interface{}, id string)
 }
