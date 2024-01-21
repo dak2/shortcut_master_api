@@ -2,7 +2,7 @@ package question
 
 import entity "shortcut_master_api/src/domain"
 
-// MEMO : for dip
+// MEMO : for di
 
 type QuestionRepository interface {
 	Select() []entity.Question

@@ -16,6 +16,12 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_USERPASS}
       MYSQL_ROOT_PASSWORD: ${DB_ROOTPASS}
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - "./docker/redis/data:/data"
   api:
     container_name: shortcut_master_api
     build:
@@ -26,6 +32,8 @@ services:
       - ./:/app
     depends_on:
       db:
+        condition: service_started
+      redis:
         condition: service_started
     ports:
       - "3000:3000"

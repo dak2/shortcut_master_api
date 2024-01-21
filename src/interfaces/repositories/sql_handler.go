@@ -1,10 +1,10 @@
-package database
+package repositories
 
 import (
 	"gorm.io/gorm"
 )
 
-// MEMO : for dip
+// MEMO : for di
 
 type SqlHandler interface {
 	Create(object interface{}) *gorm.DB

@@ -4,7 +4,7 @@ import (
 	entity "shortcut_master_api/src/domain"
 )
 
-// MEMO : for dip
+// MEMO : for di
 
 type AnswerHistoryRepository interface {
 	SelectAnswerHistories(quizType string) ([]entity.AnswerHistory, error)

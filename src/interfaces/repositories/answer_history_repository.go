@@ -1,4 +1,4 @@
-package database
+package repositories
 
 import (
 	"errors"
@@ -39,7 +39,7 @@ func generateAnswerHistoryParams() []map[string]interface{} {
 	var params []map[string]interface{}
 
 	params = append(params, map[string]interface{}{
-		"order": "id desc",
+		"order": "id asc",
 		"limit": entity.AnswerHistoryLatestUnitSize,
 	})
 

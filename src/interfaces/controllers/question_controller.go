@@ -2,7 +2,7 @@ package controllers
 
 import (
 	entity "shortcut_master_api/src/domain"
-	repository "shortcut_master_api/src/interfaces/database"
+	repository "shortcut_master_api/src/interfaces/repositories"
 	quesionUsecase "shortcut_master_api/src/usecases/question"
 )
 
