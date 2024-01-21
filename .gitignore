@@ -3,5 +3,6 @@
 
 # volume
 docker/mysql/data/volume
+docker/redis/data
 
 /tmp
