@@ -174,5 +174,5 @@ func getUsersController() *controller.UserController {
 }
 
 func getLoginController() *controller.LoginController {
-	return controller.NewLoginController(NewSqlHandler())
+	return controller.NewLoginController(NewSqlHandler(), NewRedisHandler())
 }
