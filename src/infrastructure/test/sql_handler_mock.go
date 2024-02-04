@@ -1,4 +1,4 @@
-package infrastructure
+package test
 
 import (
 	"gorm.io/gorm"

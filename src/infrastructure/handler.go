@@ -4,6 +4,8 @@ import (
 	"net/http"
 	entity "shortcut_master_api/src/domain"
 	controller "shortcut_master_api/src/interfaces/controllers"
+	redis "shortcut_master_api/src/infrastructure/redis"
+	database "shortcut_master_api/src/infrastructure/database"
 	"shortcut_master_api/src/utils"
 
 	"github.com/gorilla/sessions"
@@ -20,7 +22,7 @@ type AnswerHistoryRequest struct {
 	Answers  []entity.AnswerHistoryUpdateRequest `json:"answers"`
 }
 
-func hello(c echo.Context) error {
+func Hello(c echo.Context) error {
 	_, err := utils.GetSessionCookie(c)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, err)
@@ -29,7 +31,7 @@ func hello(c echo.Context) error {
 	return c.JSON(http.StatusOK, "Hello, World!")
 }
 
-func quizzes(c echo.Context) error {
+func Quizzes(c echo.Context) error {
 	_, err := utils.GetSessionCookie(c)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, err)
@@ -41,7 +43,7 @@ func quizzes(c echo.Context) error {
 	return c.JSON(http.StatusOK, quizzes)
 }
 
-func questions(c echo.Context) error {
+func Questions(c echo.Context) error {
 	_, err := utils.GetSessionCookie(c)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, err)
@@ -62,14 +64,14 @@ func questions(c echo.Context) error {
 	return c.JSON(http.StatusOK, questions.Questions)
 }
 
-func users(c echo.Context) error {
+func Users(c echo.Context) error {
 	userController := getUsersController()
 	users := userController.GetUser()
 	c.Bind(&users)
 	return c.JSON(http.StatusOK, users)
 }
 
-func answerHistories(c echo.Context) error {
+func AnswerHistories(c echo.Context) error {
 	_, err := utils.GetSessionCookie(c)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, err)
@@ -90,7 +92,7 @@ func answerHistories(c echo.Context) error {
 	return c.JSON(http.StatusOK, res.AnswerHistories)
 }
 
-func answers(c echo.Context) error {
+func Answers(c echo.Context) error {
 	_, err := utils.GetSessionCookie(c)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, err)
@@ -119,7 +121,7 @@ func answers(c echo.Context) error {
 	return c.JSON(http.StatusOK, answerHistories.AnswerHistories)
 }
 
-func login(c echo.Context) error {
+func Login(c echo.Context) error {
 	req := new(LoginRequest)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -139,7 +141,7 @@ func login(c echo.Context) error {
 	return c.JSON(http.StatusOK, res.UserInfo.Name)
 }
 
-func logout(c echo.Context) error {
+func Logout(c echo.Context) error {
 	sess, err := session.Get("session", c)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, "Could not get session")
@@ -154,25 +156,25 @@ func logout(c echo.Context) error {
 }
 
 func getQuizzesController() *controller.QuizController {
-	return controller.NewQuizzesController(NewSqlHandler())
+	return controller.NewQuizzesController(database.NewSqlHandler())
 }
 
 func getQuesionsController() *controller.QuestionController {
-	return controller.NewQuesionsController(NewSqlHandler())
+	return controller.NewQuesionsController(database.NewSqlHandler())
 }
 
 func getAnswerController() *controller.AnswerController {
-	return controller.NewAnswerController(NewSqlHandler())
+	return controller.NewAnswerController(database.NewSqlHandler())
 }
 
 func getAnswerHistoryController() *controller.AnswerHistoryController {
-	return controller.NewAnswerHistoryController(NewSqlHandler())
+	return controller.NewAnswerHistoryController(database.NewSqlHandler())
 }
 
 func getUsersController() *controller.UserController {
-	return controller.NewUsersController(NewSqlHandler())
+	return controller.NewUsersController(database.NewSqlHandler())
 }
 
 func getLoginController() *controller.LoginController {
-	return controller.NewLoginController(NewSqlHandler(), NewRedisHandler())
+	return controller.NewLoginController(database.NewSqlHandler(), redis.NewRedisHandler())
 }
