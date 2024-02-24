@@ -9,8 +9,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func VerifyUserMiddleware(session string) echo.HandlerFunc {
+func VerifyUserMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		if c.Path() == "/login" || c.Path() == "/logout" {
+			return next(c)
+		}
+
+		session := "user-session" // セッションキーの設定
 		r := redisClient()
 		gid, err := r.GET(session)
 
@@ -19,11 +24,11 @@ func VerifyUserMiddleware(session string) echo.HandlerFunc {
 		}
 
 		ur := userRepository()
-		if (!ur.ExistsUserByGoogleUserId(gid)) {
+		if !ur.ExistsUserByGoogleUserId(gid) {
 			return c.JSON(http.StatusUnauthorized, "Unauthorized")
 		}
 
-		return nil;
+		return next(c)
 	}
 }
 
