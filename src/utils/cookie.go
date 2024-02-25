@@ -3,16 +3,25 @@ package utils
 import (
 	"net/http"
 
+	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
 
-func GetSessionCookie(c echo.Context) (*http.Cookie, error) {
-	cookie, err := c.Cookie("session")
+var store = sessions.NewCookieStore([]byte("secret"))
+
+func GetSessionCookie(c echo.Context) (interface{}, error) {
+	session, err := store.Get(c.Request(), "session")
 	if err != nil {
 		if err == http.ErrNoCookie {
-			return nil, echo.NewHTTPError(http.StatusUnauthorized, "Cookie doesn't exist")
+			return nil, echo.NewHTTPError(http.StatusUnauthorized, "Session cookie doesn't exist")
 		}
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err)
+		return nil, echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	return cookie, nil
+
+	value := session.Values["session"]
+	if value == nil {
+		return nil, echo.NewHTTPError(http.StatusNotFound, "Session value not found")
+	}
+
+	return value, nil
 }
