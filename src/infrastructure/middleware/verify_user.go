@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"net/http"
-	repository "shortcut_master_api/src/interfaces/repositories"
-	redis "shortcut_master_api/src/infrastructure/redis"
 	database "shortcut_master_api/src/infrastructure/database"
+	redis "shortcut_master_api/src/infrastructure/redis"
+	repository "shortcut_master_api/src/interfaces/repositories"
+	"shortcut_master_api/src/utils"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,10 +16,13 @@ func VerifyUserMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return next(c)
 		}
 
-		session := "user-session" // セッションキーの設定
-		r := redisClient()
-		gid, err := r.GET(session)
+		session, err := utils.GetSessionCookie(c)
+		if err != nil {
+			return c.JSON(http.StatusUnauthorized, "Unauthorized")
+		}
 
+		r := redisClient()
+		gid, err := r.GET(session.(string))
 		if err != nil || len(gid) == 0 {
 			return c.JSON(http.StatusUnauthorized, "Unauthorized")
 		}
