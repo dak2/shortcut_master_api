@@ -21,8 +21,8 @@ func VerifyUserMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, "Unauthorized")
 		}
 
-		r := redisClient()
-		gid, err := r.GET(session.(string))
+		r := redisHandler()
+		gid, err := r.GET(c, session.(string))
 		if err != nil || len(gid) == 0 {
 			return c.JSON(http.StatusUnauthorized, "Unauthorized")
 		}
@@ -36,7 +36,7 @@ func VerifyUserMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func redisClient() *redis.RedisHandler {
+func redisHandler() *redis.RedisHandler {
 	return redis.NewRedisHandler()
 }
 
