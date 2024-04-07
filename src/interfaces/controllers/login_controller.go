@@ -31,7 +31,7 @@ func NewLoginController(sqlHandler repository.SqlHandler, redisHandler repositor
 	}
 }
 
-func (c *LoginController) Handle(ctx echo.Context, sess *sessions.Session, code string) loginUsecase.GoogleUserResult {
+func (c *LoginController) Login(ctx echo.Context, sess *sessions.Session, code string) loginUsecase.GoogleUserResult {
 	res := loginUsecase.GoogleUserResult{
 		UserInfo: loginUsecase.GoogleUserInfo{
 			GoogleUserId: "",

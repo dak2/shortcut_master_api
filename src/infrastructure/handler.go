@@ -106,7 +106,7 @@ func Login(c echo.Context) error {
 	}
 
 	loginController := getLoginController()
-	res := loginController.Handle(c, sess, req.Code)
+	res := loginController.Login(c, sess, req.Code)
 	if res.Err != nil {
 		return c.JSON(http.StatusBadRequest, res.Err)
 	}
