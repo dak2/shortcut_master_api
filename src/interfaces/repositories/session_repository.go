@@ -2,16 +2,14 @@ package repositories
 
 import (
 	"fmt"
-
-	"github.com/labstack/echo/v4"
 )
 
 type SessionRepository struct {
 	RedisHandler RedisHandler
 }
 
-func (db *SessionRepository) Save(c echo.Context, session string, userId string) error {
-	err := db.RedisHandler.SET(c, session, userId)
+func (db *SessionRepository) Save(session string, userId string) error {
+	err := db.RedisHandler.SET(session, userId)
 	if err != nil {
 		return fmt.Errorf("Failed to save session")
 	} else {
@@ -19,8 +17,8 @@ func (db *SessionRepository) Save(c echo.Context, session string, userId string)
 	}
 }
 
-func (db *SessionRepository) Delete(c echo.Context) error {
-	err := db.RedisHandler.DEL(c)
+func (db *SessionRepository) Delete(session string) error {
+	err := db.RedisHandler.DEL(session)
 	if err != nil {
 		return fmt.Errorf("Failed to delete session")
 	} else {
