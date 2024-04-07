@@ -6,7 +6,6 @@ import (
 	controller "shortcut_master_api/src/interfaces/controllers"
 	redis "shortcut_master_api/src/infrastructure/redis"
 	database "shortcut_master_api/src/infrastructure/database"
-	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
@@ -120,10 +119,11 @@ func Logout(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, "Could not get session")
 	}
 
-	sess.Options = &sessions.Options{
-		MaxAge: -1,
+	loginController := getLoginController()
+	err = loginController.Logout(c, sess)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
-	sess.Save(c.Request(), c.Response())
 
 	return c.JSON(http.StatusOK, "logout")
 }

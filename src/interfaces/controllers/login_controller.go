@@ -69,6 +69,24 @@ func (c *LoginController) Login(ctx echo.Context, sess *sessions.Session, code s
 	return res
 }
 
+func (c *LoginController) Logout(ctx echo.Context, sess *sessions.Session) error {
+	err := c.SessionInteractor.DeleteSession(sess.Values["session"].(string))
+	if err != nil {
+		return err
+	}
+
+	sess.Options = &sessions.Options{
+		MaxAge: -1,
+	}
+
+	sessErr := sess.Save(ctx.Request(), ctx.Response())
+	if sessErr != nil {
+		return err
+	}
+
+	return nil
+}
+
 func GenerateSession(ctx echo.Context, sess *sessions.Session, userInfo loginUsecase.GoogleUserInfo) error {
 	session_id := base64.StdEncoding.EncodeToString([]byte(userInfo.GoogleUserId))
 	sess.Values["session"] = session_id
