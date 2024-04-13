@@ -9,7 +9,7 @@ type SessionRepository struct {
 }
 
 func (db *SessionRepository) Save(session string, userId string) error {
-	err := db.RedisHandler.SET(session, userId)
+	err := db.RedisHandler.Set(session, userId)
 	if err != nil {
 		return fmt.Errorf("Failed to save session")
 	} else {
@@ -18,7 +18,7 @@ func (db *SessionRepository) Save(session string, userId string) error {
 }
 
 func (db *SessionRepository) Delete(session string) error {
-	err := db.RedisHandler.DEL(session)
+	err := db.RedisHandler.Del(session)
 	if err != nil {
 		return fmt.Errorf("Failed to delete session")
 	} else {

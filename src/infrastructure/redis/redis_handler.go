@@ -29,17 +29,17 @@ func NewRedisHandler() *RedisHandler {
 	return &RedisHandler{client: client}
 }
 
-func (handler *RedisHandler) SET(key string, value string) error {
+func (handler *RedisHandler) Set(key string, value string) error {
 	ctx := context.Background()
 	return handler.client.Set(ctx, key, value, 0).Err()
 }
 
-func (handler *RedisHandler) GET(key string) (string, error) {
+func (handler *RedisHandler) Get(key string) (string, error) {
 	ctx := context.Background()
 	return handler.client.Get(ctx, key).Result()
 }
 
-func (handler *RedisHandler) DEL(key string) error {
+func (handler *RedisHandler) Del(key string) error {
 	ctx := context.Background()
 	return handler.client.Del(ctx, key).Err()
 }
