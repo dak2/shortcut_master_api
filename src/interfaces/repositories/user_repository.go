@@ -39,16 +39,16 @@ func (db *UserRepository) SelectByEmail(u entity.User) (entity.User, error) {
 	return user, nil
 }
 
-func (db *UserRepository) ExistsUserByGoogleUserId(googleUserId string) (bool) {
+func (db *UserRepository) FindUserByGoogleUserId(googleUserId string) (entity.User, error) {
 	user := entity.User{}
 	res := db.SqlHandler.FindByParams(&user, "google_user_id", googleUserId)
 	if err := res.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return false
+			return entity.User{}, fmt.Errorf("record not found")
 		}
-		return false
+		return entity.User{}, fmt.Errorf("failed to get user")
 	}
-	return true
+	return user, nil
 }
 
 func (db *UserRepository) Delete(id string) {

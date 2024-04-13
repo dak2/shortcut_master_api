@@ -3,9 +3,10 @@ package infrastructure
 import (
 	"net/http"
 	entity "shortcut_master_api/src/domain"
-	controller "shortcut_master_api/src/interfaces/controllers"
-	redis "shortcut_master_api/src/infrastructure/redis"
 	database "shortcut_master_api/src/infrastructure/database"
+	redis "shortcut_master_api/src/infrastructure/redis"
+	controller "shortcut_master_api/src/interfaces/controllers"
+
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
@@ -59,8 +60,13 @@ func AnswerHistories(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "quiz_type is required")
 	}
 
+	user, ok := c.Get("user").(entity.User)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, "Unauthorized")
+	}
+
 	answerHistoryController := getAnswerHistoryController()
-	res := answerHistoryController.GetAnswerHistories(quizType)
+	res := answerHistoryController.GetAnswerHistories(user.ID, quizType)
 	if res.Err != nil {
 		return c.JSON(http.StatusInternalServerError, res.Err)
 	}
@@ -75,12 +81,21 @@ func Answers(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	user, ok := c.Get("user").(entity.User)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, "Unauthorized")
+	}
+
 	if req.QuizType == "" {
 		return c.JSON(http.StatusBadRequest, "quiz_type is required")
 	}
 
 	if len(req.Answers) == 0 {
 		return c.JSON(http.StatusBadRequest, "answers is required")
+	}
+
+	for i := range req.Answers {
+    req.Answers[i].UserId = user.ID
 	}
 
 	answerController := getAnswerController()

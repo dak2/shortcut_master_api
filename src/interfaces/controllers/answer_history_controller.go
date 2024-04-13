@@ -25,13 +25,13 @@ func NewAnswerHistoryController(sqlHandler repository.SqlHandler) *AnswerHistory
 	}
 }
 
-func (controller *AnswerHistoryController) GetAnswerHistories(quizType string) AnswerHistoryResult {
+func (controller *AnswerHistoryController) GetAnswerHistories(uid int, quizType string) AnswerHistoryResult {
 	res := AnswerHistoryResult{
 		AnswerHistories: []entity.AnswerHistory{},
 		Err:             nil,
 	}
 
-	answerHistories, err := controller.Interactor.GetAnswerHistories(quizType)
+	answerHistories, err := controller.Interactor.GetAnswerHistories(uid, quizType)
 	if err != nil {
 		res.Err = err
 		return res
