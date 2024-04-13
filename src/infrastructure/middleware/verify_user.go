@@ -28,9 +28,12 @@ func VerifyUserMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		ur := userRepository()
-		if !ur.ExistsUserByGoogleUserId(gid) {
+		user, err := ur.FindUserByGoogleUserId(gid)
+		if err != nil {
 			return c.JSON(http.StatusUnauthorized, "Unauthorized")
 		}
+
+		c.Set("user", user)
 
 		return next(c)
 	}
