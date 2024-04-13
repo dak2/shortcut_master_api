@@ -3,10 +3,13 @@ package database
 import (
 	"fmt"
 	"log"
+	"os"
 	config "shortcut_master_api/src/configs"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type SqlHandler struct {
@@ -29,9 +32,21 @@ func genDbSetting() string {
 	return dsn
 }
 
+func logSetting() logger.Interface {
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		logger.Config{
+			SlowThreshold: time.Second,
+			LogLevel:      logger.Info,
+			Colorful:      true,
+		},
+	)
+	return newLogger
+}
+
 func NewSqlHandler() *SqlHandler {
 	dsn := genDbSetting()
-	mySql, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	mySql, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logSetting()})
 	if err != nil {
 		log.Println(dsn + "database can't connect")
 		panic(err)
