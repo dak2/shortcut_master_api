@@ -44,6 +44,7 @@ func filterAnswerHistories(answers []entity.Answer, answerHistories []entity.Ans
 		}
 
 		finalAnswerHistories = append(finalAnswerHistories, entity.AnswerHistory{
+			UserId:    answerHistory.UserId,
 			AnswerId:  answerHistory.AnswerId,
 			Contents:  answerHistory.Contents,
 			IsCorrect: isCorrect,
