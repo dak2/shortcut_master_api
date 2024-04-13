@@ -60,8 +60,13 @@ func AnswerHistories(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "quiz_type is required")
 	}
 
+	user, ok := c.Get("user").(entity.User)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, "Unauthorized")
+	}
+
 	answerHistoryController := getAnswerHistoryController()
-	res := answerHistoryController.GetAnswerHistories(quizType)
+	res := answerHistoryController.GetAnswerHistories(user.ID, quizType)
 	if res.Err != nil {
 		return c.JSON(http.StatusInternalServerError, res.Err)
 	}
@@ -76,8 +81,8 @@ func Answers(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	user, err := c.Get("user").(entity.User)
-	if !err {
+	user, ok := c.Get("user").(entity.User)
+	if !ok {
 		return c.JSON(http.StatusUnauthorized, "Unauthorized")
 	}
 

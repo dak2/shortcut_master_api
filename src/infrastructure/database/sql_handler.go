@@ -78,6 +78,7 @@ func (handler *SqlHandler) FindAllByParams(obj interface{}, column interface{}, 
 	return res
 }
 
+// TODO: refactor this function
 func (handler *SqlHandler) FindAllByParamsWithRelation(obj interface{}, params []map[string]interface{}, relations []map[string]interface{}) *gorm.DB {
 	if len(relations) == 0 {
 		return &gorm.DB{}
@@ -85,7 +86,6 @@ func (handler *SqlHandler) FindAllByParamsWithRelation(obj interface{}, params [
 
 	var table, column, condition, key string
 	for _, relation := range relations {
-		fmt.Println(relation["relation"])
 		for _, r := range relation["relation"].([]map[string]interface{}) {
 			table = r["table"].(string)
 			key = r["relation_key"].(string)
@@ -107,17 +107,24 @@ func (handler *SqlHandler) FindAllByParamsWithRelation(obj interface{}, params [
 		selfKey = s["relation_key"].(string)
 	}
 
-	var order string
+	var order, selfColumn, selfCondition string
 	var limit int
 	for _, p := range params {
-		order = p["order"].(string)
-		limit = p["limit"].(int)
+		for _, r := range p["page"].([]map[string]interface{}) {
+			order = r["order"].(string)
+			limit = r["limit"].(int)
+		}
+		for _, r := range p["conditions"].([]map[string]interface{}) {
+			selfColumn = r["column"].(string)
+			selfCondition = r["condition"].(string)
+		}
 	}
 
 	joinQuery := fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s", table, table, key, selfTable, selfKey)
 	conditionQuery := fmt.Sprintf("%s.%s = ?", table, column)
-	orderQuery := fmt.Sprintf("%s.%s", table, order)
-	res := handler.db.Joins(joinQuery).Where(conditionQuery, condition).Order(orderQuery).Limit(limit).Find(obj)
+	selfConditionQuery := fmt.Sprintf("%s.%s = ?", selfTable, selfColumn)
+	orderQuery := fmt.Sprintf("%s.%s", selfTable, order)
+	res := handler.db.Joins(joinQuery).Where(selfConditionQuery, selfCondition).Where(conditionQuery, condition).Order(orderQuery).Limit(limit).Find(obj)
 	return res
 }
 

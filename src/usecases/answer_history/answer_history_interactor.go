@@ -9,8 +9,8 @@ type AnswerHistoryInteractor struct {
 	AnswerHistoryRepository AnswerHistoryRepository
 }
 
-func (interactor *AnswerHistoryInteractor) GetAnswerHistories(quizType string) ([]entity.AnswerHistory, error) {
-	answerHistories, err := interactor.AnswerHistoryRepository.SelectAnswerHistories(quizType)
+func (interactor *AnswerHistoryInteractor) GetAnswerHistories(uid int, quizType string) ([]entity.AnswerHistory, error) {
+	answerHistories, err := interactor.AnswerHistoryRepository.SelectAnswerHistories(uid, quizType)
 	if err != nil {
 		return []entity.AnswerHistory{}, err
 	}
