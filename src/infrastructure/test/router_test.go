@@ -1,4 +1,4 @@
-package infrastructure
+package test
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	entity "shortcut_master_api/src/domain"
 	controller "shortcut_master_api/src/interfaces/controllers"
+	infrastructure "shortcut_master_api/src/infrastructure"
 	"testing"
 
 	"github.com/gorilla/sessions"
@@ -22,7 +23,7 @@ func TestHelloEndpoint(t *testing.T) {
 	e := echo.New()
 	endpoint := "/hello"
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
-	e.GET(endpoint, hello)
+	e.GET(endpoint, infrastructure.Hello)
 
 	t.Run("with valid cookie", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, endpoint, nil)
@@ -224,7 +225,7 @@ func TestAnswersEndpoint(t *testing.T) {
 
 	answerController := controller.NewAnswerController(mockSqlHandler)
 
-	makeRequest := func(cookie *http.Cookie, reqBody AnswerHistoryRequest) *httptest.ResponseRecorder {
+	makeRequest := func(cookie *http.Cookie, reqBody infrastructure.AnswerHistoryRequest) *httptest.ResponseRecorder {
 		req := httptest.NewRequest(http.MethodPost, endpoint, nil)
 		if cookie != nil {
 			req.AddCookie(cookie)
@@ -249,7 +250,7 @@ func TestAnswersEndpoint(t *testing.T) {
 		t.Run("with quiz_type", func(t *testing.T) {
 			t.Run("with answers", func(t *testing.T) {
 
-				reqBody := AnswerHistoryRequest{
+				reqBody := infrastructure.AnswerHistoryRequest{
 					QuizType: quizType,
 					Answers:  answerHistoryRequest,
 				}
@@ -274,7 +275,7 @@ func TestAnswersEndpoint(t *testing.T) {
 					return c.JSON(http.StatusBadRequest, "answers is required")
 				})
 
-				reqBody := AnswerHistoryRequest{
+				reqBody := infrastructure.AnswerHistoryRequest{
 					QuizType: quizType,
 				}
 
@@ -287,7 +288,7 @@ func TestAnswersEndpoint(t *testing.T) {
 				return c.JSON(http.StatusBadRequest, "quiz_type is required")
 			})
 
-			reqBody := AnswerHistoryRequest{
+			reqBody := infrastructure.AnswerHistoryRequest{
 				Answers: answerHistoryRequest,
 			}
 
@@ -300,7 +301,7 @@ func TestAnswersEndpoint(t *testing.T) {
 			return c.JSON(http.StatusUnauthorized, "Cookie doesn't exist")
 		})
 
-		reqBody := AnswerHistoryRequest{
+		reqBody := infrastructure.AnswerHistoryRequest{
 			QuizType: quizType,
 			Answers:  answerHistoryRequest,
 		}

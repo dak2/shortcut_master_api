@@ -5,36 +5,43 @@ import (
 	"net/http"
 	repository "shortcut_master_api/src/interfaces/repositories"
 	loginUsecase "shortcut_master_api/src/usecases/login"
+	sessionUsecase "shortcut_master_api/src/usecases/session"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
 
 type LoginController struct {
-	Interactor loginUsecase.LoginInteractor
+	LoginInteractor   loginUsecase.LoginInteractor
+	SessionInteractor sessionUsecase.SessionInteractor
 }
 
-func NewLoginController(sqlHandler repository.SqlHandler) *LoginController {
-	return &LoginController {
-		Interactor: loginUsecase.LoginInteractor {
-			LoginRepository: &repository.UserRepository {
+func NewLoginController(sqlHandler repository.SqlHandler, redisHandler repository.RedisHandler) *LoginController {
+	return &LoginController{
+		LoginInteractor: loginUsecase.LoginInteractor{
+			LoginRepository: &repository.UserRepository{
 				SqlHandler: sqlHandler,
+			},
+		},
+		SessionInteractor: sessionUsecase.SessionInteractor{
+			SessionRepository: &repository.SessionRepository{
+				RedisHandler: redisHandler,
 			},
 		},
 	}
 }
 
-func (c *LoginController) Handle(ctx echo.Context, sess *sessions.Session, code string) loginUsecase.GoogleUserResult {
+func (c *LoginController) Login(ctx echo.Context, sess *sessions.Session, code string) loginUsecase.GoogleUserResult {
 	res := loginUsecase.GoogleUserResult{
 		UserInfo: loginUsecase.GoogleUserInfo{
-			GoogleUserId:  "",
-			Name:          "",
-			Email:         "",
+			GoogleUserId: "",
+			Name:         "",
+			Email:        "",
 		},
 		Err: nil,
 	}
 
-	user, err := c.Interactor.GetUser(code)
+	user, err := c.LoginInteractor.GetUser(code)
 	if err != nil {
 		res.Err = err
 		res.UserInfo = loginUsecase.GoogleUserInfo{}
@@ -42,21 +49,44 @@ func (c *LoginController) Handle(ctx echo.Context, sess *sessions.Session, code 
 	}
 
 	res.UserInfo = loginUsecase.GoogleUserInfo{
-		GoogleUserId:   user.GoogleUserId,
-		Name:					  user.Name,
-		Email:					user.Email,
+		GoogleUserId: user.GoogleUserId,
+		Name:         user.Name,
+		Email:        user.Email,
 	}
 
-	sessErr := GenerateSession(ctx, sess, res.UserInfo)
-	if sessErr != nil {
-		res.Err = err
+	genSessErr := GenerateSession(ctx, sess, res.UserInfo)
+	if genSessErr != nil {
+		res.Err = genSessErr
+		res.UserInfo = loginUsecase.GoogleUserInfo{}
+	}
+
+	saveSessErr := c.SessionInteractor.SaveSession(sess.Values["session"].(string), res.UserInfo.GoogleUserId)
+	if saveSessErr != nil {
+		res.Err = saveSessErr
 		res.UserInfo = loginUsecase.GoogleUserInfo{}
 	}
 
 	return res
 }
 
-// MEMO: セッションストアではなくCookieにセッションIDを保存する
+func (c *LoginController) Logout(ctx echo.Context, sess *sessions.Session) error {
+	err := c.SessionInteractor.DeleteSession(sess.Values["session"].(string))
+	if err != nil {
+		return err
+	}
+
+	sess.Options = &sessions.Options{
+		MaxAge: -1,
+	}
+
+	sessErr := sess.Save(ctx.Request(), ctx.Response())
+	if sessErr != nil {
+		return err
+	}
+
+	return nil
+}
+
 func GenerateSession(ctx echo.Context, sess *sessions.Session, userInfo loginUsecase.GoogleUserInfo) error {
 	session_id := base64.StdEncoding.EncodeToString([]byte(userInfo.GoogleUserId))
 	sess.Values["session"] = session_id
