@@ -31,7 +31,7 @@ func NewLoginController(sqlHandler repository.SqlHandler, redisHandler repositor
 	}
 }
 
-func (c *LoginController) Handle(ctx echo.Context, sess *sessions.Session, code string) loginUsecase.GoogleUserResult {
+func (c *LoginController) Login(ctx echo.Context, sess *sessions.Session, code string) loginUsecase.GoogleUserResult {
 	res := loginUsecase.GoogleUserResult{
 		UserInfo: loginUsecase.GoogleUserInfo{
 			GoogleUserId: "",
@@ -67,6 +67,24 @@ func (c *LoginController) Handle(ctx echo.Context, sess *sessions.Session, code 
 	}
 
 	return res
+}
+
+func (c *LoginController) Logout(ctx echo.Context, sess *sessions.Session) error {
+	err := c.SessionInteractor.DeleteSession(sess.Values["session"].(string))
+	if err != nil {
+		return err
+	}
+
+	sess.Options = &sessions.Options{
+		MaxAge: -1,
+	}
+
+	sessErr := sess.Save(ctx.Request(), ctx.Response())
+	if sessErr != nil {
+		return err
+	}
+
+	return nil
 }
 
 func GenerateSession(ctx echo.Context, sess *sessions.Session, userInfo loginUsecase.GoogleUserInfo) error {
