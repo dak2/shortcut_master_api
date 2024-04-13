@@ -4,17 +4,19 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
+	"shortcut_master_api/src/infrastructure/middleware"
 )
 
 func Handle(e *echo.Echo) {
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
+	e.Use(middleware.VerifyUserMiddleware)
 
-	e.GET("/hello", hello)
-	e.GET("/users", users)
-	e.GET("/quizzes", quizzes)
-	e.GET("/questions", questions)
-	e.GET("/answer_histories", answerHistories)
-	e.POST("/answers", answers)
-	e.POST("/login", login)
-	e.POST("/logout", logout)
+	e.GET("/hello", Hello)
+	e.GET("/users", Users)
+	e.GET("/quizzes", Quizzes)
+	e.GET("/questions", Questions)
+	e.GET("/answer_histories", AnswerHistories)
+	e.POST("/answers", Answers)
+	e.POST("/login", Login)
+	e.POST("/logout", Logout)
 }
