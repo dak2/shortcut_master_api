@@ -22,7 +22,7 @@ func VerifyUserMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		r := redisClient()
-		gid, err := r.GET(session.(string))
+		gid, err := r.Get(session.(string))
 		if err != nil || len(gid) == 0 {
 			return c.JSON(http.StatusUnauthorized, "Unauthorized")
 		}

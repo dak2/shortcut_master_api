@@ -3,7 +3,7 @@ package repositories
 // MEMO : for di
 
 type RedisHandler interface {
-	SET (key string, value string) error
-	GET (key string) (string, error)
-	DEL (key string) error
+	Set (key string, value string) error
+	Get (key string) (string, error)
+	Del (key string) error
 }
